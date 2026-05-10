@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Swapnil Chavan | Full Stack & Mobile Developer</title>
-    <link href="https://googleapis.com" rel="stylesheet">
     <style>
         :root {
             --primary: #6d28d9; 
@@ -15,7 +14,11 @@
             --text-dim: #cbd5e1;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        /* Fixed Times New Roman globally for all elements */
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Times New Roman', Times, serif !important; 
+        }
         
         body {
             background: radial-gradient(circle at top left, #1e1b4b, #0f172a);
@@ -23,9 +26,9 @@
             min-height: 100vh;
             overflow-x: hidden;
             scroll-behavior: smooth;
+            font-size: 18px; /* Increased base font size */
         }
 
-        /* Animated Background Elements */
         .orb {
             position: fixed; width: 500px; height: 500px;
             background: var(--primary); filter: blur(140px);
@@ -34,24 +37,26 @@
         .orb-1 { top: -150px; left: -150px; }
         .orb-2 { bottom: -150px; right: -150px; background: #be185d; }
 
-        /* NAVIGATION */
+        /* FIXED GLASS HEADER */
         nav {
+            display: flex; justify-content: center; align-items: center;
+            padding: 1.5rem 5%; position: fixed; width: 100%; top: 0; z-index: 2000;
+        }
+        .nav-inner {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 1.5rem 8%; position: fixed; width: 100%; top: 0; z-index: 1000;
+            background: var(--glass); padding: 1rem 2rem; border-radius: 50px;
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); width: 100%; max-width: 1200px;
         }
-        .nav-links {
-            display: flex; gap: 1.5rem; background: var(--glass);
-            padding: 0.7rem 1.8rem; border-radius: 50px;
-            backdrop-filter: blur(20px); border: 1px solid var(--glass-border);
-        }
+        .logo { font-weight: 800; font-size: 1.6rem; color: #fff; white-space: nowrap; }
+        .nav-links { display: flex; gap: 2rem; }
         .nav-links a {
-            text-decoration: none; color: var(--text); font-weight: 500;
-            opacity: 0.6; transition: 0.3s; cursor: pointer; font-size: 0.95rem;
+            text-decoration: none; color: var(--text); font-weight: 600;
+            opacity: 0.7; transition: 0.3s; cursor: pointer; font-size: 1.2rem; /* Increased Nav Font */
         }
         .nav-links a.active, .nav-links a:hover { opacity: 1; color: var(--accent); }
 
-        /* CONTENT WRAPPER */
-        main { padding: 120px 8% 60px; min-height: 90vh; }
+        main { padding: 160px 8% 60px; min-height: 90vh; }
         .page-content { display: none; animation: slideUp 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards; }
         .page-content.active { display: block; }
 
@@ -60,50 +65,42 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* HERO SECTION */
-        .hero-container { display: flex; align-items: center; justify-content: space-between; min-height: 70vh; }
-        .hero-text h1 { font-size: clamp(3rem, 8vw, 5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; }
+        .hero-container { display: flex; align-items: center; justify-content: space-between; min-height: 60vh; }
+        .hero-text h1 { font-size: clamp(3.5rem, 8vw, 5.5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; }
         .hero-text h1 span { color: var(--accent); text-shadow: 0 0 30px rgba(167, 139, 250, 0.4); }
+        
         .btn-main {
-            display: inline-block; padding: 1.1rem 2.5rem; background: var(--primary);
-            color: white; text-decoration: none; border-radius: 14px;
-            font-weight: 600; box-shadow: 0 15px 30px rgba(109, 40, 217, 0.4);
-            cursor: pointer; transition: 0.3s; border: none;
+            display: inline-block; padding: 1.3rem 3rem; background: var(--primary);
+            color: white; border-radius: 14px; font-weight: 600; 
+            cursor: pointer; transition: 0.3s; border: none; font-size: 1.2rem; /* Increased Button Font */
         }
-        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 20px 40px rgba(109, 40, 217, 0.5); }
 
-        /* CARDS & LAYOUTS */
         .glass-card {
             background: var(--glass); border: 1px solid var(--glass-border);
-            padding: 2.5rem; border-radius: 28px; backdrop-filter: blur(12px);
+            padding: 3rem; border-radius: 28px; backdrop-filter: blur(12px);
             margin-bottom: 2rem; position: relative; overflow: hidden;
         }
-        .grid-projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
-        
-        /* SKILL TAGS */
-        .tag-container { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 1rem; }
+        .grid-projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; }
+        .tag-container { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1.2rem; }
         .tag {
-            font-size: 0.8rem; background: rgba(255, 255, 255, 0.08); 
-            padding: 6px 14px; border-radius: 12px; border: 1px solid var(--glass-border);
+            font-size: 1rem; background: rgba(255, 255, 255, 0.08); 
+            padding: 8px 16px; border-radius: 12px; border: 1px solid var(--glass-border);
             color: var(--text-dim); transition: 0.3s;
         }
-        .tag:hover { background: var(--primary); color: white; border-color: var(--primary); }
         .tag.highlight { border-color: var(--accent); color: var(--accent); }
 
-        .section-title { font-size: 2.8rem; margin-bottom: 2.5rem; font-weight: 800; }
+        .section-title { font-size: 3.5rem; margin-bottom: 3rem; font-weight: 800; }
         .section-title span { color: var(--accent); }
-        h3 { color: var(--accent); margin-bottom: 1rem; font-size: 1.4rem; }
-        h4 { color: #f1f5f9; margin-bottom: 0.5rem; font-size: 1.1rem; }
-        p { line-height: 1.7; color: var(--text-dim); margin-bottom: 1rem; }
+        h3 { color: var(--accent); margin-bottom: 1.2rem; font-size: 1.8rem; }
+        h4 { color: #f1f5f9; margin-bottom: 0.8rem; font-size: 1.4rem; }
+        p { line-height: 1.8; color: var(--text-dim); margin-bottom: 1.2rem; font-size: 1.2rem; } /* Increased Paragraph Font */
 
-        /* CONTACT FORM */
-        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
-        .form-group { margin-bottom: 1.2rem; }
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 50px; }
         input, textarea {
             width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);
-            padding: 1.1rem; border-radius: 14px; color: white; outline: none; transition: 0.3s;
+            padding: 1.3rem; border-radius: 14px; color: white; outline: none; margin-bottom: 1.5rem;
+            font-size: 1.1rem; /* Increased Input Font */
         }
-        input:focus, textarea:focus { border-color: var(--accent); background: rgba(255,255,255,0.1); }
     </style>
 </head>
 <body>
@@ -112,12 +109,14 @@
     <div class="orb orb-2"></div>
 
     <nav>
-        <div class="logo" style="font-weight: 800; font-size: 1.4rem; color: #fff;">Swapnil Prabhakar Chavan</div>
-        <div class="nav-links">
-            <a onclick="showPage('home')" id="link-home" class="active">Home</a>
-            <a onclick="showPage('about')" id="link-about">About</a>
-            <a onclick="showPage('projects')" id="link-projects">Projects</a>
-            <a onclick="showPage('contact')" id="link-contact">Contact</a>
+        <div class="nav-inner">
+            <div class="logo">Swapnil Prabhakar Chavan</div>
+            <div class="nav-links">
+                <a onclick="showPage('home')" id="link-home" class="active">Home</a>
+                <a onclick="showPage('about')" id="link-about">About</a>
+                <a onclick="showPage('projects')" id="link-projects">Projects</a>
+                <a onclick="showPage('contact')" id="link-contact">Contact</a>
+            </div>
         </div>
     </nav>
 
@@ -127,7 +126,7 @@
             <div class="hero-container">
                 <div class="hero-text">
                     <h1>Building<br><span>Digital</span><br>Future.</h1>
-                    <p style="margin-bottom: 3rem; font-size: 1.3rem; max-width: 550px;">
+                    <p style="margin-bottom: 3rem; max-width: 600px;">
                         Swapnil Prabhakar Chavan — A developer blending technical precision with creative problem solving.
                     </p>
                     <button onclick="showPage('about')" class="btn-main">About Me</button>
@@ -138,20 +137,16 @@
         <!-- ABOUT PAGE -->
         <div id="about" class="page-content">
             <h2 class="section-title">About <span>Me</span></h2>
-            
-            <!-- NEW INTRODUCTION CARD -->
             <div class="glass-card">
                 <h3>Introduction</h3>
                 <p>Hello! I am <strong>Swapnil Prabhakar Chavan</strong>, a passionate and detail-oriented software developer. With a strong academic background and hands-on experience in full-stack web and mobile development, I thrive on turning complex problems into elegant digital solutions. I am committed to continuous learning and leveraging the latest technologies like AI and Data Science to build impactful applications.</p>
             </div>
-
             <div class="glass-card">
                 <h3>Education Journey</h3>
                 <p><strong>PG-Diploma in Mobile Computing</strong><br>Sunbeam Institute of Information Technology, Pune (Recent)</p>
                 <p><strong>Master of Computer Application (MCA)</strong><br>Maharashtra Institute of Technology, Chhatrapati Sambhajinagar</p>
                 <p><strong>Bachelor of Computer Application (BCA)</strong><br>Maulana Azad College of Arts, Science and Commerce, Chhatrapati Sambhajinagar</p>
             </div>
-
             <div class="glass-card">
                 <h3>Technical Arsenal</h3>
                 <div class="tag-container">
@@ -161,13 +156,12 @@
                     <span class="tag">ASP.NET</span> <span class="tag">Android (Java/XML)</span> <span class="tag">SQL</span>
                     <span class="tag">Node.js</span> <span class="tag">Swift</span> <span class="tag">Shell Scripting</span>
                 </div>
-                <h4 style="margin-top:20px;">Database Expertise</h4>
+                <h4 style="margin-top:25px;">Database Expertise</h4>
                 <div class="tag-container">
                     <span class="tag">MySQL</span> <span class="tag">Microsoft SQL Server</span> <span class="tag">MongoDB</span> 
-                    <span class="tag">PostgreSQL</span> <span class="tag">Oracle DB</span> <span class="tag">SQLite</span>  <span class="tag">MS Access</span>
+                    <span class="tag">PostgreSQL</span> <span class="tag">Oracle DB</span> <span class="tag">SQLite</span> <span class="tag">MS Access</span>
                 </div>
             </div>
-
             <div class="glass-card">
                 <h3>Certifications & Advanced Tech</h3>
                 <p>I actively stay ahead of the curve by completing specialized courses in modern tech domains:</p>
@@ -184,51 +178,51 @@
             <h2 class="section-title">My <span>Projects</span></h2>
             <div class="grid-projects">
                 <div class="glass-card">
-                    <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent);">PG-Diploma Major</span>
-                    <h4 style="margin: 10px 0;">Property Selling Site</h4>
+                    <span style="font-size: 0.9rem; text-transform: uppercase; color: var(--accent); font-weight: bold;">PG-Diploma Major</span>
+                    <h4>Property Selling Site</h4>
                     <p>A full-stack real estate platform for property listings and sales.</p>
                     <div class="tag-container"><span class="tag">Vite</span> <span class="tag">React.js</span> <span class="tag">Node.js</span></div>
                 </div>
                 <div class="glass-card">
-                    <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent);">Internship Project - Next Solution</span>
-                    <h4 style="margin: 10px 0;">Online Exam Portal</h4>
+                    <span style="font-size: 0.9rem; text-transform: uppercase; color: var(--accent); font-weight: bold;">Internship Project - Next Solution</span>
+                    <h4>Online Exam Portal</h4>
                     <p>Web-based assessment system with real-time tracking.</p>
                     <div class="tag-container"><span class="tag">HTML</span> <span class="tag">CSS</span> <span class="tag">PHP</span> <span class="tag">phpMyAdmin</span></div>
                 </div>
                 <div class="glass-card">
-                    <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent);">Internship Project - Next Solution | MCA Major</span>
-                    <h4 style="margin: 10px 0;">eCommerce Website</h4>
+                    <span style="font-size: 0.9rem; text-transform: uppercase; color: var(--accent); font-weight: bold;">Internship Project - Next Solution | MCA Major</span>
+                    <h4>eCommerce Website</h4>
                     <p>Dynamic shopping platform with product management features.</p>
                     <div class="tag-container"><span class="tag">JSP</span> <span class="tag">HTML/CSS</span> <span class="tag">Tomcat</span> <span class="tag">phpMyAdmin</span></div>
                 </div>
                 <div class="glass-card">
-                    <h4 style="margin: 10px 0;">Balloon Shooting Game</h4>
+                    <h4>Balloon Shooting Game</h4>
                     <p>Desktop application built for interactive gaming logic.</p>
                     <div class="tag-container"><span class="tag">Python</span></div>
                 </div>
                 <div class="glass-card">
-                    <h4 style="margin: 10px 0;">To Do List App</h4>
+                    <h4>To Do List App</h4>
                     <p>Android mobile application for task management.</p>
                     <div class="tag-container"><span class="tag">Android Studio</span> <span class="tag">Java</span></div>
                 </div>
                 <div class="glass-card">
-                    <h4 style="margin: 10px 0;">Inventory Management System</h4>
+                    <h4>Inventory Management System</h4>
                     <p>Complete backend for tracking stock and logistics.</p>
                     <div class="tag-container"><span class="tag">PHP</span> <span class="tag">phpMyAdmin</span></div>
                 </div>
                 <div class="glass-card">
-                    <h4 style="margin: 10px 0;">Grocery Management System</h4>
-                    <p>Enterprise solution for retail grocery stores.</p>
+                    <h4>Grocery Management System</h4>
+			<p>Enterprise solution for retail grocery stores.</p>
                     <div class="tag-container"><span class="tag">ASP.NET</span></div>
                 </div>
                 <div class="glass-card">
-                    <span style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent);">Graduation Major</span>
-                    <h4 style="margin: 10px 0;">Impact of Technology in Today's Banking System</h4>
+                    <span style="font-size: 0.9rem; text-transform: uppercase; color: var(--accent); font-weight: bold;">BCA Major</span>
+                    <h4>Impact of Technology in Today's Banking System</h4>
                     <p>A comprehensive study on modern banking systems.</p>
                     <div class="tag-container"><span class="tag">Research</span> <span class="tag">Analysis</span></div>
                 </div>
                 <div class="glass-card">
-                    <h4 style="margin: 10px 0;">Student & Hospital Management</h4>
+                    <h4>Student & Hospital Management</h4>
                     <p>Database-driven applications for administrative workflows.</p>
                     <div class="tag-container"><span class="tag">SQL Server</span> <span class="tag">MS Access</span></div>
                 </div>
@@ -245,20 +239,12 @@
                     <p><strong>Location:</strong> Chhatrapati Sambhajinagar</p>
                     <p style="margin-top:20px;">Feel free to reach out for internship opportunities or collaborations!</p>
                 </div>
-                
-                <!-- RESTORED CONTACT FORM -->
                 <div class="glass-card">
                     <form id="contactForm">
-                        <div class="form-group">
-                            <input type="text" id="name" placeholder="Full Name" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" id="email" placeholder="Email Address" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="message" rows="4" placeholder="Your Message"></textarea>
-                        </div>
-                        <button type="submit" class="btn-main" style="width: 100%; border: none;">Send Message</button>
+                        <input type="text" id="name" placeholder="Full Name" required>
+                        <input type="email" id="email" placeholder="Email Address" required>
+                        <textarea id="message" rows="4" placeholder="Your Message"></textarea>
+                        <button type="submit" class="btn-main" style="width: 100%;">Send Message</button>
                     </form>
                 </div>
             </div>
@@ -267,32 +253,14 @@
 
     <script>
         function showPage(pageId) {
-            document.querySelectorAll('.page-content').forEach(page => {
-                page.classList.remove('active');
-            });
+            document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
-
-            document.querySelectorAll('.nav-links a').forEach(link => {
-                link.classList.remove('active');
-            });
+            document.querySelectorAll('.nav-links a').forEach(l => l.classList.remove('active'));
             document.getElementById('link-' + pageId).classList.add('active');
             window.scrollTo(0,0);
         }
-
-        // Form Validation for Task-2
         document.getElementById('contactForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const name = document.getElementById('name').value;
-            
-            if(name.length < 2) {
-                alert("Please enter a valid name.");
-                return;
-            }
-            if(!email.includes("@")) {
-                alert("Please enter a valid email.");
-                return;
-            }
             alert("Message Received! I will contact you soon.");
             this.reset();
         });
