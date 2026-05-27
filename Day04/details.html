@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article View | Journal Hub</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">Maincrafts Publishing</div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home Feed</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Complete Article Workspace View Content Block -->
+    <main class="container">
+        <article class="detail-canvas-box">
+            <span class="category-tag" id="articleCategory">Category</span>
+            <h1 id="articleTitle">Loading Entry...</h1>
+            <p class="date-text" id="articleDate">Loading Publication Date...</p>
+            
+            <div class="img-frame">
+                <img id="articleImg" src="https://placeholder.com" alt="Selected Publication Graphical Cover" />
+            </div>
+
+            <!-- Complete detailed article paragraphs mount here securely -->
+            <div class="article-body-copy" id="articleBody"></div>
+
+            <a href="index.html" class="back-feed-link">&larr; Return back to Main Hub</a>
+        </article>
+    </main>
+
+    <!-- Official Multi-Column Corporate Footer Layout -->
+    <footer class="official-footer">
+        <div class="footer-columns-wrapper">
+            <div class="footer-col">
+                <h3>Maincrafts Technology</h3>
+                <p>An official portfolio development hub dedicated to showcasing high-fidelity responsive user interfaces, clean semantic code structures, and optimal performance benchmarks.</p>
+            </div>
+            <div class="footer-col">
+                <h3>Navigation Matrix</h3>
+                <ul class="footer-links-list">
+                    <li><a href="index.html">Home Directory</a></li>
+                    <li><a href="#">Articles Database</a></li>
+                    <li><a href="#">Privacy Framework</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h3>Contact Matrix</h3>
+                <ul class="footer-links-list">
+                    <li><a href="#">Support Desk</a></li>
+                    <li><a href="#">Media Inquiries</a></li>
+                    <li><a href="#">Corporate Offices</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-copyright-bar">
+            <p>&copy; 2026 Maincrafts Technology Task 4. Executed under internship guidelines.</p>
+            <p>Designed with Serif Elegance</p>
+        </div>
+    </footer>
+
+    <!-- Integrated Data Mapping Pipeline Engine -->
+    <script src="script.js"></script>
+    <script>
+        // Extract the targeted dynamic ID parameter (?id=1) from the window URL search bar
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPostId = urlParams.get('id');
+
+        // Extract corresponding dataset dictionary block from script engine data file
+        const loadedArticle = blogDatabase[currentPostId];
+
+        if (loadedArticle) {
+            document.getElementById('articleTitle').textContent = loadedArticle.title;
+            document.getElementById('articleDate').textContent = "Published on: " + loadedArticle.date;
+            document.getElementById('articleCategory').textContent = loadedArticle.category;
+            document.getElementById('articleImg').src = loadedArticle.image;
+            document.getElementById('articleBody').innerHTML = loadedArticle.content;
+            
+            document.title = loadedArticle.title + " | Maincrafts Journal";
+        } else {
+            document.getElementById('articleTitle').textContent = "Article Record Unresolved";
+            document.getElementById('articleBody').innerHTML = "<p>The selected post link is broken or does not exist.</p>";
+        }
+    </script>
+</body>
+</html>
