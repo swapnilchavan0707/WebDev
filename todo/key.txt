@@ -1,0 +1,25 @@
+-------------------------------- super admin ---------------------------------------
+email: admin@flowtrack.com
+password: swapnil@123
+
+--------------------------------- admin -----------------------------------------------
+admin 1
+email: amit.sharma@flowtrack.com
+password: amit@123
+
+admin 2
+email: priya.patil@flowtrack.com
+password: priya@123
+
+admin 3
+email: rahul.verma@flowtrack.com
+password: rahul@123
+
+admin 4
+email: sneha.iyer@flowtrack.com
+password: sneha@123
+
+admin 5
+email: vikram.singh@flowtrack.com
+password: vikram@123
+----------------------------------------------------------------------------------------------
