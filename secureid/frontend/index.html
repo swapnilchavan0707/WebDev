@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SecureID - Secure Access</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+:root{--primary:#5B67FF;--primary-dark:#4A57E8;--success:#00C853;--error:#FF3B5C;--error-bg:#FFF0F2;--bg:#FCFCFE;--border:#E8EAF6;--text:#12131A;--muted:#7A819E;--card:#FFFFFF}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:var(--bg);color:var(--text);min-height:100vh}
+.app-layout{display:flex;min-height:100vh;max-width:1200px;margin:0 auto;background:white;box-shadow:0 0 80px rgba(91,103,255,.08)}
+.brand-panel{width:380px;background:linear-gradient(165deg,#6B7AFF 0%,#5A67E8 40%,#4A57E8 100%);color:white;padding:36px 32px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.brand-panel::before{content:'';position:absolute;inset:0;background:radial-gradient(400px 300px at -10% -20%,rgba(255,255,255,.25),transparent),radial-gradient(400px 400px at 120% 120%,rgba(138,150,255,.5),transparent)}
+.brand-content{position:relative;z-index:2}
+.shield{width:52px;height:52px;background:white;color:var(--primary);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 8px 20px rgba(0,0,0,.15);margin-bottom:16px}
+.logo-area h2{font-size:22px;font-weight:700;margin-bottom:6px;letter-spacing:-.02em}
+.logo-area p{font-size:14px;line-height:1.4;opacity:.9}
+.copyright{position:relative;z-index:2;font-size:11px;opacity:.65}
+.content-panel{flex:1;padding:32px 36px;display:flex;flex-direction:column;overflow-y:auto}
+.progress{display:flex;gap:10px;margin-bottom:28px;justify-content:center}
+.progress span{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;background:#EEF0FF;color:var(--muted);border:1.5px solid #E2E6FF;transition:.3s}
+.progress span.active{background:var(--primary);color:white;border-color:var(--primary);box-shadow:0 4px 12px rgba(91,103,255,.3)}
+.progress span.done{background:var(--success);color:white;border-color:var(--success)}
+.screen{max-width:400px;margin:0 auto;width:100%;animation:fadeIn.4s ease}
+.screen h2{font-size:23px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.sub{color:var(--muted);font-size:13.5px;line-height:1.5;margin-bottom:20px}
+.input{width:100%;height:46px;border:1.5px solid var(--border);border-radius:11px;padding:0 14px;font-size:14px;outline:none;transition:.2s;background:white;margin-bottom:12px}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(91,103,255,.1)}
+.input.error{border-color:var(--error);background:var(--error-bg)}
+.check-list{margin:10px 0 14px}
+.check-list div{font-size:12px;display:flex;align-items:center;gap:8px;margin:6px 0;color:var(--muted)}
+.check-list div.ok{color:var(--success);font-weight:500}
+.btn{width:100%;height:46px;background:var(--primary);color:white;border:none;border-radius:11px;font-weight:600;font-size:14px;cursor:pointer;transition:.2s;margin-top:14px;box-shadow:0 6px 18px rgba(91,103,255,.25)}
+.btn:hover{background:var(--primary-dark);transform:translateY(-1px)}
+.btn:disabled{background:#C5C8D8;box-shadow:none;transform:none}
+.link{color:var(--muted);font-size:13px;text-align:center;display:block;margin-top:16px}
+.link b{color:var(--primary);cursor:pointer}
+.otp-wrap{display:flex;gap:10px;justify-content:center;margin:22px 0}
+.otp-wrap input{width:48px;height:52px;text-align:center;font-size:20px;font-weight:700;border:1.5px solid var(--border);border-radius:11px;outline:none;transition:.2s}
+.otp-wrap input:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(91,103,255,.1)}
+.otp-wrap input.error{border-color:var(--error);color:var(--error);background:var(--error-bg);animation:shake.3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+.timer{font-size:13px;text-align:center;margin:10px 0;color:var(--muted)}.timer b{color:var(--primary)}
+.resend{color:var(--primary);font-size:13px;text-align:center;cursor:pointer;font-weight:600;margin-top:10px}
+.err-box{background:var(--error-bg);color:var(--error);padding:12px;border-radius:11px;font-size:12.5px;text-align:center;margin:14px 0;border:1px solid #FFD0D8}
+.mfa-option{border:1.5px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:center;margin:10px 0;cursor:pointer;transition:.2s}
+.mfa-option:hover{border-color:var(--primary);background:#F8F9FF}
+.mfa-option.active{border-color:var(--primary);background:#F5F7FF;box-shadow:0 0 0 4px rgba(91,103,255,.08)}
+.mfa-option.ic{width:38px;height:38px;background:#EEF0FF;color:var(--primary);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.mfa-option.active.ic{background:var(--primary);color:white}
+.qr-box{width:180px;height:180px;margin:18px auto;background:white;border:1px solid #ECEEFF;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.success-icon{width:72px;height:72px;background:#E8F9EE;color:var(--success);border:1px solid #C9EFD6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 16px;box-shadow:0 0 0 8px rgba(0,200,83,.08)}
+.success-list{background:#F8F9FF;padding:16px;border-radius:12px;border:1px solid #ECEEFF;margin:18px 0}
+.success-list div{display:flex;gap:10px;align-items:center;font-size:13px;margin:10px 0}
+.success-list i{color:var(--success)}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){.brand-panel{display:none}.app-layout{box-shadow:none}.content-panel{padding:24px 18px}}
+</style>
+</head>
+<body>
+<div class="app-layout">
+  <div class="brand-panel">
+    <div class="brand-content">
+      <div class="shield"><i class="fa-solid fa-shield-halved"></i></div>
+      <div class="logo-area"><h2>SecureID</h2><p>Secure access<br>to your account</p></div>
+    </div>
+    <p class="copyright">© 2024 SecureID. All rights reserved.</p>
+  </div>
+  <div class="content-panel">
+    <div class="progress" id="progress"></div>
+    <div id="app"></div>
+  </div>
+</div>
+
+<script>
+const API_BASE='http://localhost:5000';
+async function api(path,method='GET',body=null,useAuth=false){
+  const headers={'Content-Type':'application/json'};
+  if(useAuth){const t=localStorage.getItem('jwt'); if(t) headers['Authorization']='Bearer '+t;}
+  const opts={method,headers,credentials:'include'}; if(body) opts.body=JSON.stringify(body);
+  const res=await fetch(API_BASE+path,opts); const data=await res.json().catch(()=>({error:'Server error'}));
+  if(!res.ok) throw data; return data;
+}
+let state={}, timerInt=null, resendInt=null;
+function renderProgress(step){document.getElementById('progress').innerHTML=[1,2,3,4,5].map(i=>`<span class="${i<step?'done':''} ${i===step?'active':''}">${i<step?'<i class="fa-solid fa-check"></i>':i}</span>`).join('');}
+function showRegister(){
+  if(timerInt) clearInterval(timerInt); if(resendInt) clearInterval(resendInt);
+  renderProgress(1);
+  document.getElementById('app').innerHTML=`
+  <div class="screen">
+    <h2>Create your account</h2><p class="sub">Let's get you started with SecureID</p>
+    <input class="input" id="name" placeholder="Full Name" value="Priya Sharma">
+    <input class="input" id="email" placeholder="Email Address" value="connect.priya${Date.now()%1000}@secureid.com">
+    <input class="input" id="mobile" placeholder="Mobile Number" value="9876543210">
+    <input class="input" id="pass" type="password" placeholder="Password" value="Priya@123" oninput="validatePass()">
+    <div class="check-list" id="checkList">
+      <div id="c1" class="ok"><i class="fa-solid fa-circle-check"></i> At least 8 characters</div>
+      <div id="c2" class="ok"><i class="fa-solid fa-circle-check"></i> 1 uppercase letter</div>
+      <div id="c3" class="ok"><i class="fa-solid fa-circle-check"></i> 1 number</div>
+      <div id="c4" class="ok"><i class="fa-solid fa-circle-check"></i> 1 special character</div>
+    </div>
+    <label style="font-size:12px;color:var(--muted)"><input type="checkbox" checked> I agree to Terms & Privacy Policy</label>
+    <button class="btn" onclick="doRegister()">Create Account</button>
+    <p class="link">Already have an account? <b onclick="showLogin()">Login</b></p>
+  </div>`;
+}
+function validatePass(){const p=document.getElementById('pass')?.value||''; const checks=[p.length>=8,/[A-Z]/.test(p),/\d/.test(p),/[^A-Za-z0-9]/.test(p)]; ['c1','c2','c3','c4'].forEach((id,i)=>{const el=document.getElementById(id); if(el) el.className=checks[i]?'ok':'';});}
+async function doRegister(){
+  try{
+    const data=await api('/api/register','POST',{fullName:document.getElementById('name').value,email:document.getElementById('email').value,mobile:document.getElementById('mobile').value,password:document.getElementById('pass').value});
+    state=data; window.lastContact=document.getElementById('email').value; window.currentChallengeId=data.challengeId;
+    window.lastOnVerified=(d)=>{state.nextId=d.nextChallengeId; window.currentChallengeId=d.nextChallengeId; showMobileOtp();};
+    renderProgress(2); createOtpScreen({title:'Verify your email',emailOrPhone:window.lastContact,challengeId:data.challengeId,onVerified:window.lastOnVerified,type:'email'});
+  }catch(e){alert(e.error);}
+}
+function createOtpScreen({title,emailOrPhone,challengeId,onVerified,type}){
+  if(timerInt) clearInterval(timerInt); if(resendInt) clearInterval(resendInt);
+  window.lastContact=emailOrPhone; window.lastOnVerified=onVerified; window.currentChallengeId=challengeId;
+  document.getElementById('app').innerHTML=`
+  <div class="screen" style="text-align:center">
+    <div style="width:56px;height:56px;background:${type==='email'?'#EEF0FF':'#E8F9EE'};border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto"><i class="fa-solid ${type==='email'?'fa-envelope':'fa-phone'}" style="color:${type==='email'?'#5B67FF':'#00C853'};font-size:22px"></i></div>
+    <h2 style="margin-top:14px">${title}</h2>
+    <p class="sub" style="text-align:center">We have sent a 6-digit code to<br><b>${emailOrPhone}</b></p>
+    <div class="otp-wrap" id="otpBoxes">${[0,1,2,3,4,5].map(i=>`<input maxlength="1" id="o${i}" inputmode="numeric" autocomplete="off">`).join('')}</div>
+    <div id="msgArea"></div>
+    <div class="timer">Code expires in <b id="timer">02:45</b></div>
+    <div class="resend" id="resendBtn">Resend code (00:25)</div>
+    <p class="link">Didn't receive code? Use <b>111111</b> for demo</p>
+  </div>`;
+  setupOtpBoxes(challengeId,onVerified,type);
+  startCountdown(165); startResendCooldown(25,challengeId,type);
+}
+function setupOtpBoxes(challengeId,onVerified,type){
+  const inputs=[...document.querySelectorAll('#otpBoxes input')];
+  inputs.forEach((inp,i)=>{
+    inp.addEventListener('input',()=>{inp.value=inp.value.replace(/[^0-9]/g,''); if(inp.value&&i<5) inputs[i+1].focus(); const latest=window.currentChallengeId||challengeId; if(inputs.every(x=>x.value.length===1)) verifyOtp(inputs,latest,onVerified,type);});
+    inp.addEventListener('keydown',e=>{if(e.key==='Backspace'&&!inp.value&&i>0) inputs[i-1].focus();});
+  }); inputs[0].focus();
+}
+async function verifyOtp(inputs,challengeId,onVerified,type){
+  const code=inputs.map(i=>i.value).join(''); if(code.length!==6) return;
+  try{
+    let data= type==='mobile'? await api('/api/verify-sms-otp','POST',{challengeId,otp:code}) : await api('/api/verify-email-otp','POST',{challengeId,otp:code});
+    if(timerInt) clearInterval(timerInt); if(resendInt) clearInterval(resendInt); onVerified(data);
+  }catch(e){
+    const left=e.attemptsLeft??2; inputs.forEach(inp=>inp.classList.add('error')); setTimeout(()=>{inputs.forEach(inp=>{inp.classList.remove('error'); inp.value='';}); inputs[0].focus();},400);
+    document.getElementById('msgArea').innerHTML=`<div class="err-box">${e.error||'Incorrect code. Please try again.'}<br>You have ${left} attempts left. Try 111111</div>`;
+  }
+}
+function startCountdown(sec){if(timerInt) clearInterval(timerInt); let left=sec; const el=document.getElementById('timer'); timerInt=setInterval(()=>{left--; if(el){const m=String(Math.floor(left/60)).padStart(2,'0'); const s=String(left%60).padStart(2,'0'); el.innerText=`${m}:${s}`;} if(left<=0) clearInterval(timerInt);},1000);}
+function startResendCooldown(sec,challengeId,type){if(resendInt) clearInterval(resendInt); let left=sec; const btn=document.getElementById('resendBtn'); if(!btn) return; btn.style.pointerEvents='none'; btn.style.opacity='.6'; resendInt=setInterval(()=>{left--; if(btn) btn.innerText=`Resend code (00:${String(left).padStart(2,'0')})`; if(left<=0){clearInterval(resendInt); if(btn){btn.innerText='Resend code'; btn.style.pointerEvents='auto'; btn.style.opacity='1'; btn.onclick=()=>handleResend(window.currentChallengeId||challengeId,type);}}},1000);}
+async function handleResend(oldId,type){
+  try{const effective=window.currentChallengeId||oldId; const path=type==='mobile'?'/api/send-sms-otp':'/api/send-email-otp'; const clean=window.lastContact.replace('+91 ','').trim(); const body=type==='mobile'?{challengeId:effective,mobile:clean}:{challengeId:effective,email:clean}; const d=await api(path,'POST',body); window.currentChallengeId=d.challengeId; createOtpScreen({title:`Verify your ${type}`,emailOrPhone:window.lastContact,challengeId:d.challengeId,onVerified:window.lastOnVerified,type});}catch(e){alert(e.error||'Resend failed');}
+}
+function showMobileOtp(){
+  renderProgress(3);
+  const mob=document.getElementById('mobile')?document.getElementById('mobile').value:window.lastContact; const clean=mob.replace('+91 ','').trim();
+  window.lastContact='+91 '+clean; window.lastOnVerified=()=>showMfaSetup();
+  api('/api/send-sms-otp','POST',{challengeId:state.nextId,mobile:clean}).then(d=>{
+    window.currentChallengeId=d.challengeId; createOtpScreen({title:'Verify your mobile',emailOrPhone:window.lastContact,challengeId:d.challengeId,onVerified:window.lastOnVerified,type:'mobile'});
+  }).catch(()=>{createOtpScreen({title:'Verify your mobile',emailOrPhone:window.lastContact,challengeId:state.nextId,onVerified:window.lastOnVerified,type:'mobile'});});
+}
+function showMfaSetup(){
+  if(timerInt) clearInterval(timerInt); if(resendInt) clearInterval(resendInt); renderProgress(4);
+  document.getElementById('app').innerHTML=`
+  <div class="screen">
+    <h2>Set up Multi-Factor Auth</h2><p class="sub">Add an extra layer of security to protect your account.</p>
+    <div class="mfa-option active" id="opt1" onclick="selectMfa(1)"><div class="ic"><i class="fa-solid fa-mobile-screen"></i></div><div><b>Authenticator App</b><br><small>Google Authenticator / Authy</small></div><i class="fa-solid fa-circle-dot" style="margin-left:auto;color:#5B67FF"></i></div>
+    <div class="mfa-option" id="opt2" onclick="selectMfa(2)"><div class="ic"><i class="fa-solid fa-comment-sms"></i></div><div><b>SMS Authentication</b><br><small>Receive codes on your mobile</small></div></div>
+    <div class="mfa-option" id="opt3" onclick="selectMfa(3)"><div class="ic"><i class="fa-solid fa-envelope"></i></div><div><b>Email Authentication</b><br><small>Receive codes on your email</small></div></div>
+    <button class="btn" onclick="showQr()">Continue</button>
+  </div>`;
+}
+function selectMfa(n){document.querySelectorAll('.mfa-option').forEach(el=>el.classList.remove('active')); document.getElementById('opt'+n).classList.add('active'); window.selectedMfa=n;}
+function showQr(){
+  renderProgress(4); const m=window.selectedMfa||1;
+  document.getElementById('app').innerHTML=`
+  <div class="screen" style="text-align:center">
+    <h2>${m==1?'Scan QR Code':'MFA Enabled'}</h2><p class="sub">${m==1?'Open your authenticator app and scan this QR code':''}</p>
+    ${m==1?'<div class="qr-box"><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SecureID-MFA" width="150"></div>':'<div style="width:80px;height:80px;background:#E8F9EE;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:18px auto"><i class="fa-solid fa-check" style="font-size:32px;color:#00C853"></i></div>'}
+    <p class="sub">Auto-verifying in <b id="count">2</b> seconds... No OTP needed at this stage</p>
+    <button class="btn" onclick="showSuccess()">Continue to Success</button>
+  </div>`;
+  let c=2; const iv=setInterval(()=>{c--; const el=document.getElementById('count'); if(el) el.innerText=c; if(c<=0){clearInterval(iv); showSuccess();}},1000);
+}
+function showSuccess(){
+  renderProgress(5);
+  document.getElementById('app').innerHTML=`
+  <div class="screen" style="text-align:center">
+    <div class="success-icon"><i class="fa-solid fa-check"></i></div>
+    <h2>Account created!</h2><p class="sub">Your account has been created successfully and MFA is enabled.</p>
+    <div class="success-list" style="text-align:left">
+      <div><i class="fa-solid fa-circle-check"></i> Email verified - ${window.lastContact}</div>
+      <div><i class="fa-solid fa-circle-check"></i> Mobile verified</div>
+      <div><i class="fa-solid fa-circle-check"></i> MFA enabled</div>
+    </div>
+    <button class="btn" onclick="showLogin()">Continue to Login</button>
+  </div>`;
+}
+function showLogin(){
+  if(timerInt) clearInterval(timerInt); renderProgress(1);
+  document.getElementById('app').innerHTML=`
+  <div class="screen" style="text-align:center">
+    <div style="width:56px;height:56px;background:#EEF0FF;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto"><i class="fa-solid fa-lock" style="color:#5B67FF"></i></div>
+    <h2 style="margin-top:12px">Welcome back!</h2><p class="sub">Login to your account</p>
+    <input class="input" id="lEmail" placeholder="Email">
+    <input class="input" id="lPass" type="password" placeholder="Password">
+    <button class="btn" onclick="doLogin()">Login</button>
+    <p class="link">New here? <b onclick="showRegister()">Create an account</b></p>
+  </div>`;
+}
+async function doLogin(){
+  try{
+    const data=await api('/api/login','POST',{email:document.getElementById('lEmail').value,password:document.getElementById('lPass').value});
+    window.currentChallengeId=data.challengeId; createOtpScreen({title:'Email Verification',emailOrPhone:data.email,challengeId:data.challengeId,onVerified:(d)=>{localStorage.setItem('jwt',d.token); alert('Login Success!');},type:'email'});
+  }catch(e){document.getElementById('app').innerHTML+=`<div class="err-box">${e.error}</div>`;}
+}
+showRegister();
+</script>
+</body>
+</html>
