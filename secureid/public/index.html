@@ -1,0 +1,4066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SecureID - Authentication</title>
+
+<!-- Inter font only. Font Awesome has been completely removed. -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Inter',sans-serif
+}
+
+:root{
+ --blue:#2D5BFF;
+ --blueLight:#EFF4FF;
+ --blueBorder:#3B82F6;
+ --border:#E5E7EB;
+ --text:#111827;
+ --muted:#6B7280;
+ --muted2:#9CA3AF;
+ --err:#DC2626;
+ --errBg:#FEF2F2;
+ --errBorder:#FECACA;
+ --green:#16A34A;
+ --greenBg:#DCFCE7;
+ --greenLight:#F0FDF4;
+ --cardShadow:0 10px 40px rgba(0,0,0,0.06);
+}
+
+body{
+  background:#F8FAFF;
+  min-height:100vh;
+  color:var(--text)
+}
+
+/* =========================================================
+   SVG ICON SYSTEM
+   No Font Awesome / no external icon library
+========================================================= */
+
+.svg-icon{
+  width:18px;
+  height:18px;
+  display:inline-block;
+  vertical-align:middle;
+  flex-shrink:0;
+}
+
+.svg-icon.sm{
+  width:14px;
+  height:14px;
+}
+
+.svg-icon.md{
+  width:20px;
+  height:20px;
+}
+
+.svg-icon.lg{
+  width:26px;
+  height:26px;
+}
+
+.svg-icon.xl{
+  width:32px;
+  height:32px;
+}
+
+/* =========================================================
+   LAYOUT
+========================================================= */
+
+.app{
+  display:flex;
+  min-height:100vh
+}
+
+.sidebar{
+  width:320px;
+  background:linear-gradient(
+    180deg,
+    #6A8DFF 0%,
+    #4B6CFF 30%,
+    #2D5BFF 100%
+  );
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  padding:28px 26px;
+  color:#fff;
+  position:sticky;
+  top:0;
+  height:100vh;
+}
+
+.sidebar-top{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  font-weight:700;
+  font-size:18px
+}
+
+.sidebar-logo{
+  width:40px;
+  height:40px;
+  background:rgba(255,255,255,0.22);
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  font-size:18px
+}
+
+.sidebar-mid{
+  margin-top:auto;
+  margin-bottom:auto
+}
+
+.sidebar-mid .s1{
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:4px
+}
+
+.sidebar-mid .s2{
+  font-size:13px;
+  opacity:.85
+}
+
+.sidebar-bot{
+  font-size:11px;
+  opacity:.6
+}
+
+/* WEB HEADER */
+
+.web-header{
+  height:64px;
+  background:#fff;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 32px;
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+
+.web-header-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:700
+}
+
+.web-header-logo{
+  width:32px;
+  height:32px;
+  background:#EFF4FF;
+  color:var(--blue);
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  font-size:14px
+}
+
+/* STEPPER */
+
+.stepper{
+  display:flex;
+  align-items:center;
+  gap:10px
+}
+
+.step{
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:12px;
+  font-weight:600;
+  border:1.5px solid var(--border);
+  background:#fff;
+  color:var(--muted2)
+}
+
+.step.active{
+  background:var(--blue);
+  color:#fff;
+  border-color:var(--blue)
+}
+
+.step.done{
+  background:var(--blueLight);
+  color:var(--blue);
+  border-color:var(--blueLight)
+}
+
+.step-line{
+  width:28px;
+  height:2px;
+  background:var(--border)
+}
+
+.step-line.done{
+  background:var(--blue)
+}
+
+/* MAIN */
+
+.main{
+  flex:1;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:40px 16px;
+  min-height:100vh
+}
+
+.card{
+  width:100%;
+  max-width:400px;
+  background:#fff;
+  border:1px solid #E9ECF2;
+  border-radius:24px;
+  padding:32px 28px;
+  box-shadow:var(--cardShadow)
+}
+
+.card.web{
+  max-width:440px
+}
+
+/* =========================================================
+   COMMON UI
+========================================================= */
+
+.top-icon{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  margin:4px auto 16px;
+  font-size:26px;
+}
+
+.top-icon.blue{
+  background:#EFF4FF;
+  color:var(--blue)
+}
+
+.top-icon.red{
+  background:#FEF2F2;
+  color:var(--err)
+}
+
+.top-icon.green{
+  background:#DCFCE7;
+  color:var(--green)
+}
+
+.top-icon.shield-blue{
+  background:#EFF4FF;
+  color:var(--blue);
+  border:1px solid #DBEAFE
+}
+
+.h-title{
+  font-size:18px;
+  font-weight:700;
+  text-align:center
+}
+
+.h-sub{
+  font-size:13px;
+  color:var(--muted);
+  text-align:center;
+  margin-top:6px;
+  line-height:1.5;
+  margin-bottom:22px
+}
+
+.h-sub b{
+  color:var(--text);
+  font-weight:600
+}
+
+/* INPUT */
+
+.label{
+  font-size:11px;
+  color:var(--muted);
+  font-weight:500;
+  margin-bottom:6px;
+  display:block;
+  margin-top:12px
+}
+
+.input{
+  height:44px;
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  padding:0 12px;
+  gap:10px;
+  background:#fff;
+  transition:.15s
+}
+
+.input:focus-within{
+  border-color:var(--blue);
+  box-shadow:0 0 0 4px #EFF4FF
+}
+
+.input.err{
+  border-color:var(--err);
+  background:var(--errBg)
+}
+
+.input input,
+.input select{
+  flex:1;
+  border:none;
+  outline:none;
+  background:transparent;
+  font-size:13.5px;
+  min-width:0
+}
+
+.input .ico{
+  color:var(--muted2);
+  font-size:13px;
+  width:16px;
+  text-align:center
+}
+
+.input .eye{
+  color:var(--muted2);
+  cursor:pointer;
+  font-size:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.err-text{
+  color:var(--err);
+  font-size:11px;
+  margin-top:4px
+}
+
+.err-box{
+  background:var(--errBg);
+  border:1px solid var(--errBorder);
+  color:var(--err);
+  font-size:12px;
+  padding:10px 12px;
+  border-radius:10px;
+  text-align:center;
+  line-height:1.4;
+  margin:12px 0
+}
+
+/* BUTTON */
+
+.btn{
+  width:100%;
+  height:46px;
+  background:var(--blue);
+  color:#fff;
+  border:none;
+  border-radius:12px;
+  font-weight:600;
+  font-size:14px;
+  cursor:pointer;
+  margin-top:14px;
+  transition:.15s
+}
+
+.btn:hover{
+  background:#1D4ED8
+}
+
+.btn:disabled{
+  opacity:.5;
+  cursor:not-allowed
+}
+
+.btn-outline{
+  width:100%;
+  height:46px;
+  background:#fff;
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  font-weight:600;
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  cursor:pointer
+}
+
+/* ROW */
+
+.row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin:12px 0
+}
+
+.check{
+  font-size:12px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:var(--text)
+}
+
+.check input{
+  width:14px;
+  height:14px
+}
+
+.link{
+  color:var(--blue);
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  text-decoration:none
+}
+
+.link:hover{
+  text-decoration:underline
+}
+
+/* DIVIDER */
+
+.divider{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin:18px 0;
+  color:var(--muted2);
+  font-size:12px
+}
+
+.divider::before,
+.divider::after{
+  content:'';
+  flex:1;
+  height:1px;
+  background:var(--border)
+}
+
+/* METHODS */
+
+.method{
+  border:1.5px solid var(--border);
+  border-radius:14px;
+  padding:14px 14px;
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+  margin-bottom:12px;
+  cursor:pointer;
+  background:#fff;
+  transition:.15s
+}
+
+.method.selected{
+  border-color:var(--blue);
+  background:#F5F7FF
+}
+
+.method .m-ico{
+  width:36px;
+  height:36px;
+  border-radius:10px;
+  background:#F3F4F6;
+  display:grid;
+  place-items:center;
+  font-size:14px;
+  color:var(--muted)
+}
+
+.method.selected .m-ico{
+  background:#DBEAFE;
+  color:var(--blue)
+}
+
+.method .m-title{
+  font-size:13px;
+  font-weight:600
+}
+
+.method .m-sub{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px
+}
+
+.radio{
+  margin-left:auto;
+  width:20px;
+  height:20px;
+  border:2px solid #D1D5DB;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  flex-shrink:0;
+  margin-top:2px
+}
+
+.method.selected .radio{
+  border-color:var(--blue)
+}
+
+.method.selected .radio::after{
+  content:'';
+  width:10px;
+  height:10px;
+  background:var(--blue);
+  border-radius:50%
+}
+
+/* OTP */
+
+.otp-row{
+  display:flex;
+  gap:8px;
+  justify-content:center;
+  margin:18px 0
+}
+
+.otp-row input{
+  width:44px;
+  height:52px;
+  border:1.5px solid var(--border);
+  border-radius:12px;
+  text-align:center;
+  font-size:20px;
+  font-weight:700;
+  outline:none;
+  background:#fff
+}
+
+.otp-row input:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 4px #EFF4FF
+}
+
+.otp-row input.err{
+  border-color:var(--err);
+  color:var(--err);
+  background:var(--errBg)
+}
+
+.otp-row input.filled{
+  border-color:#D1D5DB
+}
+
+.timer{
+  font-size:12px;
+  text-align:center;
+  color:var(--muted)
+}
+
+.timer b{
+  color:var(--blue);
+  font-weight:700
+}
+
+.timer.err{
+  color:var(--err)
+}
+
+.resend{
+  font-size:12px;
+  color:var(--blue);
+  font-weight:600;
+  text-align:center;
+  margin-top:12px;
+  cursor:pointer
+}
+
+.resend.disabled{
+  color:var(--muted2);
+  cursor:default
+}
+
+/* KEYPAD */
+
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:22px
+}
+
+.key{
+  height:52px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:#fff;
+  font-weight:600;
+  font-size:16px;
+  cursor:pointer;
+  display:grid;
+  place-items:center
+}
+
+.key:active{
+  background:#F3F4F6
+}
+
+/* PASSWORD CHECKS */
+
+.pw-checks{
+  margin:8px 0 10px 0
+}
+
+.pw-checks div{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  font-size:11.5px;
+  margin:5px 0;
+  color:var(--muted)
+}
+
+.dot{
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:9px
+}
+
+.dot.ok{
+  background:var(--greenBg);
+  color:var(--green)
+}
+
+.dot.no{
+  background:#F3F4F6;
+  color:var(--muted2)
+}
+
+/* QR */
+
+.qr-box{
+  width:180px;
+  height:180px;
+  margin:20px auto;
+  border:1px solid var(--border);
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+  background:#fff;
+  overflow:hidden
+}
+
+.tick{
+  width:20px;
+  height:20px;
+  background:var(--greenBg);
+  color:var(--green);
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+  font-size:11px
+}
+
+/* MOBILE HEADER */
+
+.mobile-top{
+  height:54px;
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:12px;
+  border-bottom:1px solid var(--border);
+  background:#fff
+}
+
+.back-btn{
+  width:32px;
+  height:32px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  cursor:pointer
+}
+
+.back-btn:hover{
+  background:#F3F4F6
+}
+
+/* VIEW SWITCH */
+
+.view-switch{
+  position:fixed;
+  top:12px;
+  right:12px;
+  z-index:100;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:24px;
+  padding:4px;
+  display:flex;
+  gap:4px;
+  box-shadow:0 4px 20px rgba(0,0,0,.08)
+}
+
+.view-switch button{
+  padding:7px 14px;
+  border-radius:20px;
+  border:none;
+  background:transparent;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer
+}
+
+.view-switch button.active{
+  background:var(--blue);
+  color:#fff
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:900px){
+
+  .app{
+    flex-direction:column
+  }
+
+  .sidebar{
+    width:100%;
+    height:auto;
+    position:relative;
+    flex-direction:row;
+    align-items:center;
+    padding:16px 20px
+  }
+
+  .sidebar-mid,
+  .sidebar-bot{
+    display:none
+  }
+
+  .web-header{
+    padding:0 16px
+  }
+
+  .stepper{
+    gap:6px
+  }
+
+  .step{
+    width:24px;
+    height:24px;
+    font-size:11px
+  }
+
+  .step-line{
+    width:16px
+  }
+
+  .main{
+    padding:20px 12px
+  }
+}
+
+@media(max-width:520px){
+
+  .view-switch{
+    position:fixed;
+    top:8px;
+    right:8px;
+    transform:scale(.9);
+    transform-origin:top right
+  }
+
+  .card{
+    padding:28px 20px;
+    border-radius:20px
+  }
+
+  .otp-row{
+    gap:6px
+  }
+
+  .otp-row input{
+    width:42px
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================================
+     SVG ICON DEFINITIONS
+     These replace Font Awesome completely.
+========================================================= -->
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+
+    <!-- Shield -->
+    <symbol id="icon-shield" viewBox="0 0 24 24">
+      <path
+        d="M12 3L19 6V11.5C19 16.2 16.1 19.7 12 21C7.9 19.7 5 16.2 5 11.5V6L12 3Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M9.5 12L11.2 13.7L14.8 10.1"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </symbol>
+
+    <!-- User -->
+    <symbol id="icon-user" viewBox="0 0 24 24">
+      <circle
+        cx="12"
+        cy="8"
+        r="3.2"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+      />
+      <path
+        d="M5.5 20C6.2 16.7 8.4 15 12 15C15.6 15 17.8 16.7 18.5 20"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+      />
+    </symbol>
+
+    <!-- Envelope -->
+    <symbol id="icon-envelope" viewBox="0 0 24 24">
+      <rect
+        x="3.5"
+        y="5"
+        width="17"
+        height="14"
+        rx="2.2"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+      />
+      <path
+        d="M4.5 7L12 13L19.5 7"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </symbol>
+
+    <!-- Phone -->
+    <symbol id="icon-phone" viewBox="0 0 24 24">
+      <path
+        d="M7.2 3.8L9.7 3.3C10.4 3.2 11 3.6 11.2 4.2L12 7.1C12.2 7.7 12 8.3 11.5 8.7L9.9 10C10.9 12.2 12.7 14.1 14.9 15.1L16.2 13.5C16.6 13 17.2 12.8 17.8 13L20.7 13.8C21.4 14 21.7 14.6 21.6 15.3L21.1 17.8C20.9 18.8 20 19.5 19 19.4C10.8 18.5 5.5 13.2 4.6 5C4.5 4 5.2 4.1 7.2 3.8Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linejoin="round"
+      />
+    </symbol>
+
+    <!-- Lock -->
+    <symbol id="icon-lock" viewBox="0 0 24 24">
+      <rect
+        x="5"
+        y="10"
+        width="14"
+        height="10"
+        rx="2"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+      />
+      <path
+        d="M8 10V7.5C8 5.3 9.8 3.5 12 3.5C14.2 3.5 16 5.3 16 7.5V10"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+      />
+      <circle cx="12" cy="15" r="1" fill="currentColor"/>
+    </symbol>
+
+    <!-- Eye -->
+    <symbol id="icon-eye" viewBox="0 0 24 24">
+      <path
+        d="M2.8 12C5 8.5 8 6.7 12 6.7C16 6.7 19 8.5 21.2 12C19 15.5 16 17.3 12 17.3C8 17.3 5 15.5 2.8 12Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linejoin="round"
+      />
+      <circle
+        cx="12"
+        cy="12"
+        r="2.4"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+      />
+    </symbol>
+
+    <!-- Eye slash -->
+    <symbol id="icon-eye-slash" viewBox="0 0 24 24">
+      <path
+        d="M3 3L21 21"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+      />
+      <path
+        d="M10.2 6.9C10.8 6.7 11.4 6.7 12 6.7C16 6.7 19 8.5 21.2 12C20.2 13.6 19 14.8 17.5 15.7M7.2 8.2C5.5 9.1 4 10.4 2.8 12C5 15.5 8 17.3 12 17.3C13.2 17.3 14.3 17.1 15.3 16.7"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </symbol>
+
+    <!-- Arrow left -->
+    <symbol id="icon-arrow-left" viewBox="0 0 24 24">
+      <path
+        d="M19 12H5M10 7L5 12L10 17"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </symbol>
+
+    <!-- Arrow right -->
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24">
+      <path
+        d="M5 12H19M14 7L19 12L14 17"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </symbol>
+
+    <!-- Check -->
+    <symbol id="icon-check" viewBox="0 0 24 24">
+      <path
+        d="M5 12.5L9.2 16.5L19 7"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </symbol>
+
+    <!-- Circle check -->
+    <symbol id="icon-circle-check" viewBox="0 0 24 24">
+      <circle
+        cx="12"
+        cy="12"
+        r="8.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+      />
+      <path
+        d="M8.5 12.2L10.8 14.5L15.7 9.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </symbol>
+
+    <!-- Warning -->
+    <symbol id="icon-warning" viewBox="0 0 24 24">
+      <path
+        d="M12 3.8L21 19.5H3L12 3.8Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M12 9V13"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+      />
+      <circle cx="12" cy="16" r=".9" fill="currentColor"/>
+    </symbol>
+
+    <!-- Circle exclamation -->
+    <symbol id="icon-circle-exclamation" viewBox="0 0 24 24">
+      <circle
+        cx="12"
+        cy="12"
+        r="8.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+      />
+      <path
+        d="M12 8V12.5"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.7"
+        stroke-linecap="round"
+      />
+      <circle cx="12" cy="16" r=".9" fill="currentColor"/>
+    </symbol>
+
+    <!-- Delete -->
+    <symbol id="icon-delete" viewBox="0 0 24 24">
+      <path
+        d="M5 8H19L17.8 19H6.2L5 8Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linejoin="round"
+      />
+      <path
+        d="M9 8V5H15V8M4 8H20"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+      />
+      <path
+        d="M9.5 11.5V16M14.5 11.5V16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.4"
+        stroke-linecap="round"
+      />
+    </symbol>
+
+    <!-- Mobile screen -->
+    <symbol id="icon-mobile" viewBox="0 0 24 24">
+      <rect
+        x="7"
+        y="3"
+        width="10"
+        height="18"
+        rx="2"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+      />
+      <path
+        d="M10 6H14"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+      />
+      <circle cx="12" cy="18" r=".9" fill="currentColor"/>
+    </symbol>
+
+    <!-- Chat -->
+    <symbol id="icon-chat" viewBox="0 0 24 24">
+      <path
+        d="M5 5.5H19C20.1 5.5 21 6.4 21 7.5V15C21 16.1 20.1 17 19 17H11L6 20V17H5C3.9 17 3 16.1 3 15V7.5C3 6.4 3.9 5.5 5 5.5Z"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linejoin="round"
+      />
+      <circle cx="8" cy="11.3" r=".8" fill="currentColor"/>
+      <circle cx="12" cy="11.3" r=".8" fill="currentColor"/>
+      <circle cx="16" cy="11.3" r=".8" fill="currentColor"/>
+    </symbol>
+
+    <!-- Google G -->
+    <symbol id="icon-google" viewBox="0 0 24 24">
+      <path
+        d="M21 12.2C21 11.5 20.9 10.8 20.7 10.2H12V14H16.9C16.7 15.2 16 16.2 15 16.8V19.2H18.4C20.1 17.6 21 15.2 21 12.2Z"
+        fill="#4285F4"
+      />
+      <path
+        d="M12 21C14.4 21 16.4 20.2 18.4 19.2L15 16.8C14.2 17.3 13.2 17.6 12 17.6C9.7 17.6 7.7 16 7 13.8H3.5V16.2C5.2 19.1 8.3 21 12 21Z"
+        fill="#34A853"
+      />
+      <path
+        d="M7 13.8C6.8 13.2 6.7 12.6 6.7 12C6.7 11.4 6.8 10.8 7 10.2V7.8H3.5C2.8 9.1 2.5 10.5 2.5 12C2.5 13.5 2.8 14.9 3.5 16.2L7 13.8Z"
+        fill="#FBBC05"
+      />
+      <path
+        d="M12 6.4C13.3 6.4 14.5 6.8 15.4 7.7L18.5 4.6C16.5 2.8 14.4 2 12 2C8.3 2 5.2 3.9 3.5 6.8L7 9.2C7.7 7 9.7 6.4 12 6.4Z"
+        fill="#EA4335"
+      />
+    </symbol>
+
+    <!-- Radio / small circle -->
+    <symbol id="icon-dot" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3" fill="currentColor"/>
+    </symbol>
+
+  </defs>
+</svg>
+
+<script>
+/* =========================================================
+   ICON HELPER
+========================================================= */
+
+function icon(name, className = 'svg-icon'){
+  return `
+    <svg class="${className}" aria-hidden="true">
+      <use href="#icon-${name}"></use>
+    </svg>
+  `;
+}
+</script>
+
+
+<!-- =========================================================
+     VIEW SWITCH
+========================================================= -->
+
+<div class="view-switch">
+  <button id="swLogin" class="active" onclick="setMode('login')">
+    Login Flow
+  </button>
+
+  <button id="swReg" onclick="setMode('register')">
+    Register Flow
+  </button>
+</div>
+
+
+<!-- =========================================================
+     LOGIN LAYOUT
+========================================================= -->
+
+<div id="loginLayout" class="app">
+
+  <div class="sidebar">
+
+    <div class="sidebar-top">
+      <div class="sidebar-logo">
+        <script>
+          document.write(icon('shield','svg-icon md'));
+        </script>
+      </div>
+
+      SecureID
+    </div>
+
+    <div class="sidebar-mid">
+      <div class="s1">Secure access</div>
+      <div class="s2">to your account</div>
+    </div>
+
+    <div class="sidebar-bot">
+      © 2024 SecureID. All rights reserved.
+    </div>
+
+  </div>
+
+  <div class="main">
+    <div class="card web" id="loginRoot"></div>
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     REGISTER LAYOUT
+========================================================= -->
+
+<div id="regLayout" class="app" style="display:none;flex-direction:column">
+
+  <div class="web-header">
+
+    <div class="web-header-left">
+
+      <div class="web-header-logo">
+        <script>
+          document.write(icon('shield','svg-icon'));
+        </script>
+      </div>
+
+      SecureID
+
+    </div>
+
+    <div class="stepper" id="stepper"></div>
+
+    <div style="width:90px"></div>
+
+  </div>
+
+  <div class="main">
+    <div class="card web" id="regRoot"></div>
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let mode='login';
+
+let loginStep=1;
+// 1 default
+// 2 invalid
+// 3 choose method
+// 4 otp
+// 5 wrong
+// 6 expired
+
+let regStep=1;
+// 1 details
+// 2 email otp
+// 3 email wrong
+// 4 email expired
+// 5 mobile otp
+// 6 mobile wrong
+// 7 mobile max
+// 8 mfa choice
+// 9 qr
+// 10 mfa code
+// 11 mfa wrong
+// 12 success
+
+let challengeId=null;
+
+let emailForFlow='priya.sharma@email.com';
+let mobileForFlow='98765 43210';
+
+let timer=null;
+
+let expLeft=165;
+let resendLeft=25;
+
+let attempts=3;
+
+let otp=['','','','','',''];
+let regOtp=['','','','','',''];
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function fmt(s){
+  return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+}
+
+
+function startTimers(onExpire){
+
+  clearInterval(timer);
+
+  expLeft=165;
+  resendLeft=25;
+
+  timer=setInterval(()=>{
+
+    expLeft--;
+    resendLeft--;
+
+    const e=document.getElementById('expTime');
+
+    if(e){
+      e.textContent=fmt(expLeft);
+    }
+
+    const r=document.getElementById('resendTxt');
+
+    if(r){
+
+      if(mode==='login' && loginStep===6){
+
+      }else{
+
+        r.textContent =
+          resendLeft>0
+          ? `Resend code (${fmt(resendLeft)})`
+          : `Resend code`;
+
+      }
+
+    }
+
+    if(expLeft<=0){
+
+      clearInterval(timer);
+
+      if(onExpire){
+        onExpire();
+      }
+
+    }
+
+  },1000);
+
+}
+
+
+async function api(path,body){
+
+  const r=await fetch(path,{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    credentials:'include',
+    body:JSON.stringify(body)
+  });
+
+  const j=await r.json();
+
+  if(!r.ok){
+    throw j;
+  }
+
+  return j;
+}
+
+
+/* =========================================================
+   LOGIN RENDER
+========================================================= */
+
+function renderLogin(){
+
+  const root=document.getElementById('loginRoot');
+
+  const invalid=loginStep===2;
+  const isWrong=loginStep===5;
+  const isExpired=loginStep===6;
+
+
+  /* =======================================================
+     LOGIN DEFAULT / INVALID
+  ======================================================= */
+
+  if(loginStep===1 || loginStep===2){
+
+    root.innerHTML=`
+
+      <div class="top-icon blue">
+        ${icon('shield','svg-icon lg')}
+      </div>
+
+      <div class="h-title">
+        Welcome back!
+      </div>
+
+      <div class="h-sub">
+        Login to your account
+      </div>
+
+
+      <label class="label">
+        Email or Username
+      </label>
+
+      <div class="input ${invalid?'err':''}">
+
+        <span class="ico">
+          ${icon('user','svg-icon sm')}
+        </span>
+
+        <input
+          id="le"
+          value="priya.sharma@email.com"
+          placeholder="Email or Username"
+        >
+
+        <span
+          class="ico"
+          style="${invalid?'color:var(--err)':''}"
+        >
+          ${
+            invalid
+            ? icon('circle-exclamation','svg-icon sm')
+            : ''
+          }
+        </span>
+
+      </div>
+
+
+      <label class="label">
+        Password
+      </label>
+
+      <div class="input ${invalid?'err':''}">
+
+        <span class="ico">
+          ${icon('lock','svg-icon sm')}
+        </span>
+
+        <input
+          id="lp"
+          type="password"
+          value="Password123!"
+          placeholder="Password"
+        >
+
+        <span
+          class="eye"
+          onclick="toggleEye('lp',this)"
+        >
+          ${icon('eye','svg-icon sm')}
+        </span>
+
+      </div>
+
+
+      ${
+        invalid
+        ?
+        `
+        <div class="err-box">
+          Invalid email or password. Please try again.
+        </div>
+        `
+        :
+        ''
+      }
+
+
+      <div class="row">
+
+        <label class="check">
+          <input type="checkbox">
+          Remember me
+        </label>
+
+        <span class="link">
+          Forgot password?
+        </span>
+
+      </div>
+
+
+      <button
+        class="btn"
+        onclick="doLogin()"
+      >
+        Login
+      </button>
+
+
+      <div class="divider">
+        or
+      </div>
+
+
+      <button
+        class="btn-outline"
+        onclick="alert('Google OAuth mock')"
+      >
+
+        ${icon('google','svg-icon')}
+
+        Continue with Google
+
+      </button>
+
+
+      <div
+        style="
+          text-align:center;
+          margin-top:18px;
+          font-size:12px;
+          color:var(--muted)
+        "
+      >
+        New here?
+
+        <span
+          class="link"
+          onclick="setMode('register')"
+        >
+          Create an account
+        </span>
+
+      </div>
+
+    `;
+  }
+
+
+  /* =======================================================
+     CHOOSE METHOD
+  ======================================================= */
+
+  else if(loginStep===3){
+
+    root.innerHTML=`
+
+      <div
+        style="
+          display:flex;
+          align-items:center;
+          gap:8px;
+          margin-bottom:12px
+        "
+      >
+
+        <div
+          class="back-btn"
+          onclick="loginStep=1;renderLogin()"
+        >
+          ${icon('arrow-left','svg-icon')}
+        </div>
+
+      </div>
+
+
+      <div class="top-icon blue">
+        ${icon('shield','svg-icon lg')}
+      </div>
+
+
+      <div class="h-title">
+        Verify your identity
+      </div>
+
+      <div class="h-sub">
+        Choose a method to continue
+      </div>
+
+
+      <div
+        class="method selected"
+        onclick="pickMethod(this)"
+      >
+
+        <div class="m-ico">
+          ${icon('envelope','svg-icon')}
+        </div>
+
+        <div>
+
+          <div class="m-title">
+            Email OTP
+          </div>
+
+          <div class="m-sub">
+            Receive a code on your email
+          </div>
+
+        </div>
+
+        <div class="radio"></div>
+
+      </div>
+
+
+      <div
+        class="method"
+        onclick="pickMethod(this)"
+      >
+
+        <div class="m-ico">
+          ${icon('chat','svg-icon')}
+        </div>
+
+        <div>
+
+          <div class="m-title">
+            SMS OTP
+          </div>
+
+          <div class="m-sub">
+            Receive a code on your mobile
+          </div>
+
+        </div>
+
+        <div class="radio"></div>
+
+      </div>
+
+
+      <div
+        class="method"
+        onclick="pickMethod(this)"
+      >
+
+        <div class="m-ico">
+          ${icon('lock','svg-icon')}
+        </div>
+
+        <div>
+
+          <div class="m-title">
+            Authenticator App
+          </div>
+
+          <div class="m-sub">
+            Use code from authenticator app
+          </div>
+
+        </div>
+
+        <div class="radio"></div>
+
+      </div>
+
+
+      <button
+        class="btn"
+        style="margin-top:20px"
+        onclick="startOtpFlow()"
+      >
+        Continue
+      </button>
+
+    `;
+  }
+
+
+  /* =======================================================
+     LOGIN OTP
+  ======================================================= */
+
+  else{
+
+    root.innerHTML=`
+
+      <div
+        style="
+          display:flex;
+          align-items:center;
+          gap:8px;
+          margin-bottom:12px
+        "
+      >
+
+        <div
+          class="back-btn"
+          onclick="loginStep=3;renderLogin()"
+        >
+          ${icon('arrow-left','svg-icon')}
+        </div>
+
+      </div>
+
+
+      <div class="top-icon blue">
+
+        ${icon('envelope','svg-icon lg')}
+
+      </div>
+
+
+      <div class="h-title">
+        Email Verification
+      </div>
+
+
+      <div class="h-sub">
+        Enter the 6-digit code sent to
+        <br>
+        <b>${emailForFlow}</b>
+      </div>
+
+
+      <div class="otp-row">
+
+        ${[0,1,2,3,4,5].map(i=>`
+
+          <input
+            id="o${i}"
+            maxlength="1"
+            value="${
+              isExpired
+              ? ''
+              :
+              isWrong && i===5
+              ? '4'
+              :
+              loginStep===4
+              ? ['4','8','2','9','1','3'][i]
+              :
+              otp[i]||''
+            }"
+            class="${
+              isWrong && i===5
+              ? 'err'
+              : ''
+            }"
+            oninput="onOtpIn(${i},this.value)"
+            onkeydown="onOtpKey(${i},event)"
+          >
+
+        `).join('')}
+
+      </div>
+
+
+      ${
+        isWrong
+        ?
+        `
+          <div class="timer err">
+            Incorrect code. Please try again.
+            <br>
+            You have 2 attempts left.
+          </div>
+
+          <div
+            class="timer"
+            style="margin-top:6px"
+          >
+            Code expires in
+            <b id="expTime">
+              ${fmt(132)}
+            </b>
+          </div>
+        `
+        :
+        isExpired
+        ?
+        `
+          <div class="timer err">
+            Code expired.
+          </div>
+
+          <div
+            class="resend"
+            style="margin-top:14px"
+            onclick="resendLogin()"
+          >
+            <span
+              style="
+                background:var(--blue);
+                color:#fff;
+                padding:10px 20px;
+                border-radius:10px;
+                display:inline-block
+              "
+            >
+              Resend code
+            </span>
+          </div>
+
+          <div
+            class="timer"
+            style="margin-top:12px"
+          >
+            You can request a new code in
+            <b style="color:var(--blue)">
+              00:28
+            </b>
+          </div>
+        `
+        :
+        `
+          <div class="timer">
+            Code expires in
+            <b id="expTime">
+              ${fmt(expLeft)}
+            </b>
+          </div>
+        `
+      }
+
+
+      ${
+        !isExpired
+        ?
+        `
+          <div
+            class="resend"
+            id="resendTxt"
+            onclick="resendLogin()"
+          >
+            Resend code (${fmt(resendLeft)})
+          </div>
+        `
+        :
+        ''
+      }
+
+
+      <div
+        class="resend"
+        style="
+          color:var(--muted);
+          font-weight:400;
+          margin-top:18px
+        "
+      >
+        Didn't receive the code?
+      </div>
+
+
+      <div class="keypad">
+
+        ${
+          [1,2,3,4,5,6,7,8,9]
+          .map(n=>`
+            <button
+              class="key"
+              onclick="pressKey('${n}')"
+            >
+              ${n}
+            </button>
+          `)
+          .join('')
+        }
+
+        <div></div>
+
+        <button
+          class="key"
+          onclick="pressKey('0')"
+        >
+          0
+        </button>
+
+        <button
+          class="key"
+          onclick="pressKey('del')"
+        >
+          ${icon('delete','svg-icon')}
+        </button>
+
+      </div>
+
+
+      <div
+        style="
+          text-align:center;
+          margin-top:12px;
+          font-size:11px;
+          color:var(--muted2)
+        "
+      >
+        Demo:
+
+        <span
+          class="link"
+          onclick="showOtp()"
+        >
+          View OTP from server
+        </span>
+
+      </div>
+
+    `;
+  }
+}
+
+
+/* =========================================================
+   LOGIN FUNCTIONS
+========================================================= */
+
+function pickMethod(el){
+
+  document
+    .querySelectorAll('.method')
+    .forEach(m=>m.classList.remove('selected'));
+
+  el.classList.add('selected');
+}
+
+
+function toggleEye(id,iconEl){
+
+  const inp=document.getElementById(id);
+
+  if(!inp){
+    return;
+  }
+
+  if(inp.type==='password'){
+
+    inp.type='text';
+
+    iconEl.innerHTML=icon(
+      'eye-slash',
+      'svg-icon sm'
+    );
+
+  }else{
+
+    inp.type='password';
+
+    iconEl.innerHTML=icon(
+      'eye',
+      'svg-icon sm'
+    );
+
+  }
+}
+
+
+async function doLogin(){
+
+  try{
+
+    const email=
+      document
+      .getElementById('le')
+      .value
+      .trim();
+
+    const password=
+      document
+      .getElementById('lp')
+      .value;
+
+    emailForFlow=
+      email ||
+      'priya.sharma@email.com';
+
+    const res=await api(
+      '/api/login',
+      {
+        email:emailForFlow,
+        password
+      }
+    );
+
+    if(res.mfaRequired){
+
+      challengeId=res.challengeId;
+
+      loginStep=4;
+
+      otp=['','','','','',''];
+
+      startTimers(()=>{
+
+        loginStep=6;
+
+        renderLogin();
+
+      });
+
+      renderLogin();
+
+    }else{
+
+      alert('Login success');
+
+    }
+
+  }catch(e){
+
+    loginStep=2;
+
+    renderLogin();
+
+  }
+
+}
+
+
+function startOtpFlow(){
+
+  loginStep=4;
+
+  otp=['','','','','',''];
+
+  startTimers(()=>{
+
+    loginStep=6;
+
+    renderLogin();
+
+  });
+
+  renderLogin();
+
+}
+
+
+function onOtpIn(i,v){
+
+  if(!/^\d$/.test(v)){
+
+    document
+      .getElementById('o'+i)
+      .value='';
+
+    return;
+
+  }
+
+  otp[i]=v;
+
+  if(i<5){
+
+    document
+      .getElementById('o'+(i+1))
+      ?.focus();
+
+  }
+
+  if(otp.every(x=>x!=='')){
+
+    verifyOtp();
+
+  }
+
+}
+
+
+function onOtpKey(i,e){
+
+  if(e.key==='Backspace'){
+
+    otp[i]='';
+
+    if(i>0){
+
+      document
+        .getElementById('o'+(i-1))
+        ?.focus();
+
+    }
+
+  }
+
+}
+
+
+function pressKey(k){
+
+  if(k==='del'){
+
+    for(let i=5;i>=0;i--){
+
+      if(otp[i]!==''){
+
+        otp[i]='';
+
+        renderLogin();
+
+        break;
+
+      }
+
+    }
+
+    return;
+
+  }
+
+
+  const idx=
+    otp.findIndex(v=>v==='');
+
+  if(idx!==-1){
+
+    otp[idx]=k;
+
+    if(idx===5){
+
+      verifyOtp();
+
+    }else{
+
+      renderLogin();
+
+      setTimeout(()=>{
+
+        document
+          .getElementById('o'+(idx+1))
+          ?.focus();
+
+      },10);
+
+    }
+
+  }
+
+}
+
+
+async function verifyOtp(){
+
+  try{
+
+    const code=otp.join('');
+
+    const res=await api(
+      '/api/verify-login-otp',
+      {
+        challengeId,
+        otp:code
+      }
+    );
+
+    alert(
+      'Login Success! Token: '+
+      res.token.slice(0,20)+
+      '...'
+    );
+
+    loginStep=1;
+
+    otp=['','','','','',''];
+
+    renderLogin();
+
+  }catch(e){
+
+    if(e.code==='EXPIRED'){
+
+      loginStep=6;
+
+    }else{
+
+      loginStep=5;
+
+      attempts=e.attemptsLeft||2;
+
+    }
+
+    otp=['','','','','',''];
+
+    renderLogin();
+
+  }
+
+}
+
+
+async function resendLogin(){
+
+  try{
+
+    const r=await api(
+      '/api/send-email-otp',
+      {
+        email:emailForFlow
+      }
+    );
+
+    challengeId=r.challengeId;
+
+    loginStep=4;
+
+    otp=['','','','','',''];
+
+    startTimers(()=>{
+
+      loginStep=6;
+
+      renderLogin();
+
+    });
+
+    renderLogin();
+
+  }catch(e){
+
+    alert(e.error);
+
+  }
+
+}
+
+
+async function showOtp(){
+
+  const j=
+    await fetch(
+      '/api/_debug/otp/'+challengeId
+    ).then(r=>r.json());
+
+  alert('OTP: '+j.otp);
+
+}
+
+
+/* =========================================================
+   REGISTER STEPPER
+========================================================= */
+
+function renderStepper(){
+
+  const el=
+    document.getElementById('stepper');
+
+  const steps=[1,2,3,4,5];
+
+  const cur=
+    regStep<=4
+    ?1
+    :
+    regStep<=7
+    ?2
+    :
+    regStep<=8
+    ?3
+    :
+    regStep<=11
+    ?4
+    :5;
+
+
+  el.innerHTML=
+
+    steps.map((n,i)=>{
+
+      const isActive=n===cur;
+      const isDone=n<cur;
+
+      return `
+
+        ${
+          i>0
+          ?
+          `
+            <div
+              class="step-line ${isDone?'done':''}"
+            ></div>
+          `
+          :
+          ''
+        }
+
+        <div
+          class="
+            step
+            ${isActive?'active':''}
+            ${isDone?'done':''}
+          "
+        >
+
+          ${
+            isDone
+            ?
+            icon('check','svg-icon sm')
+            :
+            n
+          }
+
+        </div>
+
+      `;
+
+    }).join('');
+
+}
+
+
+/* =========================================================
+   REGISTER RENDER
+========================================================= */
+
+function renderRegister(){
+
+  renderStepper();
+
+  const root=
+    document.getElementById('regRoot');
+
+
+  /* =======================================================
+     REGISTER DETAILS
+  ======================================================= */
+
+  if(regStep===1){
+
+    root.innerHTML=`
+
+      <div
+        style="
+          text-align:left;
+          margin-bottom:18px
+        "
+      >
+
+        <div
+          style="
+            font-size:18px;
+            font-weight:700
+          "
+        >
+          Create your account
+        </div>
+
+        <div
+          style="
+            font-size:13px;
+            color:var(--muted);
+            margin-top:4px
+          "
+        >
+          Let's get you started
+        </div>
+
+      </div>
+
+
+      <label class="label">
+        Full Name
+      </label>
+
+      <div class="input">
+        <input
+          id="rn"
+          value="Priya Sharma"
+          placeholder="Full Name"
+        >
+      </div>
+
+
+      <label class="label">
+        Email
+      </label>
+
+      <div class="input">
+        <input
+          id="re"
+          value="priya.sharma@email.com"
+          placeholder="Email"
+        >
+      </div>
+
+
+      <label class="label">
+        Mobile Number
+      </label>
+
+      <div
+        style="
+          display:flex;
+          gap:8px
+        "
+      >
+
+        <div
+          class="input"
+          style="width:84px"
+        >
+
+          <select
+            style="
+              border:none;
+              background:transparent;
+              font-size:13px;
+              width:100%
+            "
+          >
+
+            <option>+91</option>
+            <option>+1</option>
+
+          </select>
+
+        </div>
+
+
+        <div
+          class="input"
+          style="flex:1"
+        >
+
+          <input
+            id="rm"
+            value="98765 43210"
+          >
+
+        </div>
+
+      </div>
+
+
+      <label class="label">
+        Password
+      </label>
+
+
+      <div class="input">
+
+        <input
+          id="rp"
+          type="password"
+          value="Password123!"
+          oninput="checkPw(this.value)"
+        >
+
+        <span
+          class="eye"
+          onclick="toggleEye('rp',this)"
+        >
+          ${icon('eye','svg-icon sm')}
+        </span>
+
+      </div>
+
+
+      <div
+        class="pw-checks"
+        id="pwChecks"
+      ></div>
+
+
+      <label
+        class="check"
+        style="margin:14px 0"
+      >
+
+        <input
+          type="checkbox"
+          checked
+        >
+
+        <span>
+          I agree to the
+
+          <span class="link">
+            Terms & Conditions
+          </span>
+
+          and
+
+          <span class="link">
+            Privacy Policy
+          </span>
+
+        </span>
+
+      </label>
+
+
+      <button
+        class="btn"
+        onclick="doRegister()"
+      >
+        Create Account
+      </button>
+
+
+      <div
+        style="
+          text-align:center;
+          margin-top:14px;
+          font-size:12px;
+          color:var(--muted)
+        "
+      >
+
+        Already have an account?
+
+        <span
+          class="link"
+          onclick="setMode('login')"
+        >
+          Login
+        </span>
+
+      </div>
+
+    `;
+
+    checkPw('Password123!');
+
+  }
+
+
+  /* =======================================================
+     EMAIL OTP
+  ======================================================= */
+
+  else if(regStep===2){
+
+    root.innerHTML=`
+
+      <div class="top-icon blue">
+        ${icon('envelope','svg-icon lg')}
+      </div>
+
+      <div class="h-title">
+        Verify your email
+      </div>
+
+      <div class="h-sub">
+        We have sent a 6-digit code to
+        <br>
+        <b>${emailForFlow}</b>
+      </div>
+
+
+      <div class="otp-row">
+
+        ${[0,1,2,3,4,5].map(i=>`
+
+          <input
+            id="ro${i}"
+            maxlength="1"
+            oninput="onRegEmail(${i},this.value)"
+          >
+
+        `).join('')}
+
+      </div>
+
+
+      <div class="timer">
+
+        Code expires in
+
+        <b id="expTime">
+          ${fmt(expLeft)}
+        </b>
+
+      </div>
+
+
+      <div
+        class="resend"
+        id="resendTxt"
+        onclick="resendRegEmail()"
+      >
+        Resend code (${fmt(resendLeft)})
+      </div>
+
+
+      <div
+        style="
+          text-align:center;
+          margin-top:16px;
+          font-size:11px
+        "
+      >
+
+        <span
+          class="link"
+          onclick="autoFill()"
+        >
+          Auto-fill OTP (demo)
+        </span>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     EMAIL WRONG OTP
+  ======================================================= */
+
+  else if(regStep===3){
+
+    root.innerHTML=`
+
+      <div class="top-icon red">
+        ${icon('envelope','svg-icon lg')}
+      </div>
+
+      <div class="h-title">
+        Verify your email
+      </div>
+
+      <div class="h-sub">
+        We have sent a 6-digit code to
+        <br>
+        <b>${emailForFlow}</b>
+      </div>
+
+
+      <div class="otp-row">
+
+        ${
+          ['4','8','2','9','1','0']
+          .map((v,i)=>`
+
+            <input
+              value="${v}"
+              class="${i===5?'err':''}"
+            >
+
+          `)
+          .join('')
+        }
+
+      </div>
+
+
+      <div class="err-box">
+
+        Incorrect code. Please try again.
+
+        <br>
+
+        You have ${attempts} attempts left.
+
+      </div>
+
+
+      <div class="timer">
+        Code expires in
+        <b>01:15</b>
+      </div>
+
+
+      <div class="resend">
+        Resend code (00:25)
+      </div>
+
+
+      <div
+        class="resend"
+        style="
+          color:var(--muted);
+          font-weight:400
+        "
+      >
+        Didn't receive the code?
+      </div>
+
+
+      <button
+        class="btn"
+        style="margin-top:16px"
+        onclick="regStep=2;renderRegister()"
+      >
+        Try Again
+      </button>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     EMAIL EXPIRED
+  ======================================================= */
+
+  else if(regStep===4){
+
+    root.innerHTML=`
+
+      <div class="top-icon red">
+        ${icon('envelope','svg-icon lg')}
+      </div>
+
+
+      <div class="h-title">
+        Verify your email
+      </div>
+
+
+      <div class="h-sub">
+        We have sent a 6-digit code to
+        <br>
+        <b>${emailForFlow}</b>
+      </div>
+
+
+      <div class="otp-row">
+
+        ${[0,1,2,3,4,5]
+          .map(()=>`<input>`)
+          .join('')
+        }
+
+      </div>
+
+
+      <div
+        class="timer err"
+        style="margin-top:8px"
+      >
+        This code has expired.
+      </div>
+
+
+      <button
+        class="btn"
+        style="margin-top:20px"
+        onclick="resendRegEmail()"
+      >
+        Resend New Code
+      </button>
+
+
+      <div
+        class="resend"
+        style="
+          color:var(--muted);
+          font-weight:400;
+          margin-top:16px
+        "
+      >
+        Didn't receive the code?
+      </div>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     MOBILE OTP
+  ======================================================= */
+
+  else if(regStep===5){
+
+    root.innerHTML=`
+
+      <div class="top-icon green">
+        ${icon('phone','svg-icon lg')}
+      </div>
+
+
+      <div class="h-title">
+        Verify your mobile
+      </div>
+
+
+      <div class="h-sub">
+        We have sent a 6-digit code to
+        <br>
+        <b>+91 ${mobileForFlow}</b>
+      </div>
+
+
+      <div class="otp-row">
+
+        ${[0,1,2,3,4,5].map(i=>`
+
+          <input
+            id="mo${i}"
+            maxlength="1"
+            oninput="onRegMobile(${i},this.value)"
+          >
+
+        `).join('')}
+
+      </div>
+
+
+      <div class="timer">
+
+        Code expires in
+
+        <b id="expTime">
+          ${fmt(expLeft)}
+        </b>
+
+      </div>
+
+
+      <div
+        class="resend"
+        id="resendTxt"
+        onclick="resendRegSms()"
+      >
+        Resend code (${fmt(resendLeft)})
+      </div>
+
+
+      <div
+        style="
+          text-align:center;
+          margin-top:14px;
+          font-size:12px;
+          color:var(--muted)
+        "
+      >
+
+        Wrong number?
+
+        <span
+          class="link"
+          onclick="regStep=1;renderRegister()"
+        >
+          Change
+        </span>
+
+      </div>
+
+
+      <div
+        style="
+          text-align:center;
+          margin-top:8px;
+          font-size:11px
+        "
+      >
+
+        <span
+          class="link"
+          onclick="autoFillMobile()"
+        >
+          Auto-fill OTP
+        </span>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     MOBILE WRONG
+  ======================================================= */
+
+  else if(regStep===6){
+
+    root.innerHTML=`
+
+      <div class="top-icon red">
+        ${icon('phone','svg-icon lg')}
+      </div>
+
+
+      <div class="h-title">
+        Verify your mobile
+      </div>
+
+
+      <div class="h-sub">
+        We have sent a 6-digit code to
+        <br>
+        <b>+91 ${mobileForFlow}</b>
+      </div>
+
+
+      <div class="otp-row">
+
+        ${
+          ['1','2','3','4','5','6']
+          .map((v,i)=>`
+
+            <input
+              value="${v}"
+              class="${i===5?'err':''}"
+            >
+
+          `)
+          .join('')
+        }
+
+      </div>
+
+
+      <div class="err-box">
+
+        Incorrect code. Please try again.
+
+        <br>
+
+        You have 1 attempt left.
+
+      </div>
+
+
+      <div class="timer">
+
+        Code expires in
+        <b>01:02</b>
+
+      </div>
+
+
+      <div class="resend">
+        Resend code (00:25)
+      </div>
+
+
+      <div
+        style="
+          text-align:center;
+          margin-top:12px;
+          font-size:12px;
+          color:var(--muted)
+        "
+      >
+
+        Wrong number?
+
+        <span
+          class="link"
+          onclick="regStep=1;renderRegister()"
+        >
+          Change
+        </span>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     MOBILE MAX ATTEMPTS
+  ======================================================= */
+
+  else if(regStep===7){
+
+    root.innerHTML=`
+
+      <div class="top-icon red">
+        ${icon('phone','svg-icon lg')}
+      </div>
+
+
+      <div class="h-title">
+        Verify your mobile
+      </div>
+
+
+      <div class="h-sub">
+        We have sent a 6-digit code to
+        <br>
+        <b>+91 ${mobileForFlow}</b>
+      </div>
+
+
+      <div class="otp-row">
+
+        ${[0,1,2,3,4,5]
+          .map(()=>`<input>`)
+          .join('')
+        }
+
+      </div>
+
+
+      <div class="err-box">
+
+        Maximum attempts reached.
+
+        <br>
+
+        Please request a new code.
+
+      </div>
+
+
+      <button
+        class="btn"
+        onclick="resendRegSms()"
+      >
+        Resend New Code
+      </button>
+
+
+      <div
+        style="
+          text-align:center;
+          margin-top:12px;
+          font-size:12px;
+          color:var(--muted)
+        "
+      >
+
+        Wrong number?
+
+        <span
+          class="link"
+          onclick="regStep=1;renderRegister()"
+        >
+          Change
+        </span>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     MFA CHOICE
+  ======================================================= */
+
+  else if(regStep===8){
+
+    root.innerHTML=`
+
+      <div class="top-icon blue">
+        ${icon('shield','svg-icon lg')}
+      </div>
+
+
+      <div class="h-title">
+        Set up Multi-Factor Auth
+      </div>
+
+
+      <div class="h-sub">
+        Add an extra layer of security
+        <br>
+        to protect your account.
+      </div>
+
+
+      <div class="method selected">
+
+        <div class="m-ico">
+          ${icon('mobile','svg-icon')}
+        </div>
+
+        <div>
+
+          <div class="m-title">
+            Authenticator App
+          </div>
+
+          <div class="m-sub">
+            (Google Authenticator / Authy)
+          </div>
+
+        </div>
+
+        <div class="radio"></div>
+
+      </div>
+
+
+      <div
+        class="method"
+        onclick="pickMethod(this)"
+      >
+
+        <div class="m-ico">
+          ${icon('chat','svg-icon')}
+        </div>
+
+        <div>
+
+          <div class="m-title">
+            SMS Authentication
+          </div>
+
+          <div class="m-sub">
+            Receive codes on your mobile
+          </div>
+
+        </div>
+
+        <div class="radio"></div>
+
+      </div>
+
+
+      <div
+        class="method"
+        onclick="pickMethod(this)"
+      >
+
+        <div class="m-ico">
+          ${icon('envelope','svg-icon')}
+        </div>
+
+        <div>
+
+          <div class="m-title">
+            Email Authentication
+          </div>
+
+          <div class="m-sub">
+            Receive codes on your email
+          </div>
+
+        </div>
+
+        <div class="radio"></div>
+
+      </div>
+
+
+      <button
+        class="btn"
+        style="margin-top:20px"
+        onclick="regStep=9;renderRegister()"
+      >
+        Continue
+      </button>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     QR
+  ======================================================= */
+
+  else if(regStep===9){
+
+    root.innerHTML=`
+
+      <div class="h-title">
+        Scan QR Code
+      </div>
+
+
+      <div class="h-sub">
+        Open your authenticator app and
+        <br>
+        scan this QR code
+      </div>
+
+
+      <div class="qr-box">
+
+        <img
+          src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=otpauth://totp/SecureID:priya.sharma@email.com?secret=JBSWY3DPEHPK3PXP"
+          style="
+            width:160px;
+            height:160px
+          "
+        >
+
+      </div>
+
+
+      <div
+        class="resend"
+        onclick="alert('Setup key: JBSWY3DPEHPK3PXP')"
+      >
+        Can't scan? Enter setup key
+      </div>
+
+
+      <div
+        style="
+          display:flex;
+          gap:10px;
+          margin-top:28px
+        "
+      >
+
+        <button
+          class="btn-outline"
+          style="flex:1"
+          onclick="regStep=8;renderRegister()"
+        >
+          Back
+        </button>
+
+
+        <button
+          class="btn"
+          style="
+            flex:1;
+            margin-top:0
+          "
+          onclick="regStep=10;renderRegister()"
+        >
+          Continue
+        </button>
+
+      </div>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     MFA CODE
+  ======================================================= */
+
+  else if(regStep===10){
+
+    root.innerHTML=`
+
+      <div class="top-icon blue">
+        ${icon('shield','svg-icon lg')}
+      </div>
+
+
+      <div class="h-title">
+        Enter the 6-digit code
+      </div>
+
+
+      <div class="h-sub">
+        Enter the code from your
+        <br>
+        authenticator app
+      </div>
+
+
+      <div class="otp-row">
+
+        ${[0,1,2,3,4,5].map(i=>`
+
+          <input
+            id="ao${i}"
+            maxlength="1"
+            oninput="onAuthOtp(${i},this.value)"
+          >
+
+        `).join('')}
+
+      </div>
+
+
+      <div class="timer">
+
+        Code expires in
+
+        <b id="expTime">
+          00:28
+        </b>
+
+      </div>
+
+
+      <div
+        class="resend"
+        style="
+          color:var(--muted);
+          font-weight:400
+        "
+      >
+        Can't access your app?
+      </div>
+
+
+      <button
+        class="btn"
+        style="margin-top:20px"
+        onclick="regStep=12;renderRegister()"
+      >
+        Verify (Demo)
+      </button>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     MFA WRONG
+  ======================================================= */
+
+  else if(regStep===11){
+
+    root.innerHTML=`
+
+      <div class="top-icon red">
+        ${icon('warning','svg-icon lg')}
+      </div>
+
+
+      <div class="h-title">
+        Enter the 6-digit code
+      </div>
+
+
+      <div class="h-sub">
+        Enter the code from your
+        <br>
+        authenticator app
+      </div>
+
+
+      <div class="otp-row">
+
+        ${
+          ['6','2','4','1','1','1']
+          .map((v,i)=>`
+
+            <input
+              value="${v}"
+              class="${i===5?'err':''}"
+            >
+
+          `)
+          .join('')
+        }
+
+      </div>
+
+
+      <div class="timer err">
+        Invalid code. Please try again.
+      </div>
+
+
+      <div
+        class="timer"
+        style="margin-top:6px"
+      >
+
+        Code expires in
+
+        <b style="color:var(--blue)">
+          00:10
+        </b>
+
+      </div>
+
+
+      <div
+        class="resend"
+        style="
+          color:var(--muted);
+          font-weight:400;
+          margin-top:12px
+        "
+      >
+        Can't access your app?
+      </div>
+
+
+      <button
+        class="btn"
+        style="margin-top:16px"
+        onclick="regStep=10;renderRegister()"
+      >
+        Try Again
+      </button>
+
+    `;
+
+  }
+
+
+  /* =======================================================
+     SUCCESS
+  ======================================================= */
+
+  else if(regStep===12){
+
+    root.innerHTML=`
+
+      <div
+        class="top-icon green"
+        style="
+          width:80px;
+          height:80px;
+          font-size:34px
+        "
+      >
+        ${icon('check','svg-icon xl')}
+      </div>
+
+
+      <div class="h-title">
+        Account created!
+      </div>
+
+
+      <div class="h-sub">
+        Your account has been created
+        <br>
+        successfully and MFA is enabled.
+      </div>
+
+
+      <div
+        style="
+          margin-top:22px;
+          display:flex;
+          flex-direction:column;
+          gap:12px
+        "
+      >
+
+        <div
+          style="
+            display:flex;
+            gap:10px;
+            align-items:center;
+            font-size:13px
+          "
+        >
+
+          <span class="tick">
+            ${icon('check','svg-icon sm')}
+          </span>
+
+          Email verified
+
+        </div>
+
+
+        <div
+          style="
+            display:flex;
+            gap:10px;
+            align-items:center;
+            font-size:13px
+          "
+        >
+
+          <span class="tick">
+            ${icon('check','svg-icon sm')}
+          </span>
+
+          Mobile verified
+
+        </div>
+
+
+        <div
+          style="
+            display:flex;
+            gap:10px;
+            align-items:center;
+            font-size:13px
+          "
+        >
+
+          <span class="tick">
+            ${icon('check','svg-icon sm')}
+          </span>
+
+          MFA enabled
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="btn"
+        style="margin-top:26px"
+        onclick="setMode('login')"
+      >
+        Continue to Login
+      </button>
+
+    `;
+
+  }
+
+}
+
+
+/* =========================================================
+   PASSWORD CHECKS
+========================================================= */
+
+function checkPw(v){
+
+  const checks=[
+
+    {
+      re:/.{8,}/,
+      label:'At least 8 characters'
+    },
+
+    {
+      re:/[A-Z]/,
+      label:'1 uppercase letter'
+    },
+
+    {
+      re:/[0-9]/,
+      label:'1 number'
+    },
+
+    {
+      re:/[^A-Za-z0-9]/,
+      label:'1 special character'
+    }
+
+  ];
+
+
+  const el=
+    document.getElementById('pwChecks');
+
+  if(!el){
+    return;
+  }
+
+
+  el.innerHTML=
+
+    checks.map(c=>{
+
+      const ok=c.re.test(v);
+
+      return `
+
+        <div>
+
+          <span
+            class="dot ${ok?'ok':'no'}"
+          >
+
+            ${
+              ok
+              ?
+              icon('check','svg-icon sm')
+              :
+              icon('dot','svg-icon sm')
+            }
+
+          </span>
+
+          ${c.label}
+
+        </div>
+
+      `;
+
+    }).join('');
+
+}
+
+
+/* =========================================================
+   REGISTER ACTIONS
+========================================================= */
+
+async function doRegister(){
+
+  try{
+
+    const fullName=
+      document
+      .getElementById('rn')
+      .value;
+
+    const email=
+      document
+      .getElementById('re')
+      .value
+      .trim();
+
+    const mobile=
+      document
+      .getElementById('rm')
+      .value;
+
+    const password=
+      document
+      .getElementById('rp')
+      .value;
+
+
+    emailForFlow=email;
+    mobileForFlow=mobile;
+
+
+    const res=await api(
+      '/api/register',
+      {
+        fullName,
+        email,
+        mobile,
+        password
+      }
+    );
+
+
+    challengeId=res.challengeId;
+
+    otp=['','','','','',''];
+
+    expLeft=165;
+
+
+    startTimers(()=>{
+
+      regStep=4;
+
+      renderRegister();
+
+    });
+
+
+    regStep=2;
+
+    renderRegister();
+
+  }catch(e){
+
+    alert(
+      e.error ||
+      'Register failed'
+    );
+
+  }
+
+}
+
+
+async function onRegEmail(i,v){
+
+  if(!/^\d$/.test(v)){
+    return;
+  }
+
+
+  regOtp[i]=v;
+
+
+  document
+    .getElementById('ro'+i)
+    .value=v;
+
+
+  if(i<5){
+
+    document
+      .getElementById('ro'+(i+1))
+      ?.focus();
+
+  }
+
+
+  if(regOtp.filter(Boolean).length===6){
+
+    try{
+
+      await api(
+        '/api/verify-email-otp',
+        {
+          challengeId,
+          otp:regOtp.join('')
+        }
+      );
+
+
+      const sms=await api(
+        '/api/send-sms-otp',
+        {
+          email:emailForFlow
+        }
+      );
+
+
+      challengeId=sms.challengeId;
+
+      regOtp=['','','','','',''];
+
+      expLeft=165;
+
+
+      startTimers(()=>{
+
+        regStep=7;
+
+        renderRegister();
+
+      });
+
+
+      regStep=5;
+
+      renderRegister();
+
+    }catch(e){
+
+      attempts=e.attemptsLeft||2;
+
+
+      if(e.code==='EXPIRED'){
+
+        regStep=4;
+
+      }else{
+
+        regStep=3;
+
+      }
+
+
+      renderRegister();
+
+    }
+
+  }
+
+}
+
+
+async function onRegMobile(i,v){
+
+  if(!/^\d$/.test(v)){
+    return;
+  }
+
+
+  regOtp[i]=v;
+
+
+  document
+    .getElementById('mo'+i)
+    .value=v;
+
+
+  if(i<5){
+
+    document
+      .getElementById('mo'+(i+1))
+      ?.focus();
+
+  }
+
+
+  if(regOtp.filter(Boolean).length===6){
+
+    try{
+
+      await api(
+        '/api/verify-sms-otp',
+        {
+          challengeId,
+          otp:regOtp.join('')
+        }
+      );
+
+
+      regOtp=['','','','','',''];
+
+      regStep=8;
+
+      renderRegister();
+
+    }catch(e){
+
+      if(e.code==='MAX_ATTEMPTS'){
+
+        regStep=7;
+
+      }else{
+
+        regStep=6;
+
+      }
+
+      renderRegister();
+
+    }
+
+  }
+
+}
+
+
+async function onAuthOtp(i,v){
+
+  if(!/^\d$/.test(v)){
+    return;
+  }
+
+
+  document
+    .getElementById('ao'+i)
+    .value=v;
+
+
+  if(i<5){
+
+    document
+      .getElementById('ao'+(i+1))
+      ?.focus();
+
+  }
+
+}
+
+
+async function resendRegEmail(){
+
+  try{
+
+    const r=await api(
+      '/api/send-email-otp',
+      {
+        email:emailForFlow
+      }
+    );
+
+
+    challengeId=r.challengeId;
+
+    regOtp=['','','','','',''];
+
+    expLeft=165;
+
+
+    startTimers(()=>{
+
+      regStep=4;
+
+      renderRegister();
+
+    });
+
+
+    regStep=2;
+
+    renderRegister();
+
+  }catch(e){
+
+    alert(e.error);
+
+  }
+
+}
+
+
+async function resendRegSms(){
+
+  try{
+
+    const r=await api(
+      '/api/send-sms-otp',
+      {
+        email:emailForFlow
+      }
+    );
+
+
+    challengeId=r.challengeId;
+
+    regOtp=['','','','','',''];
+
+    expLeft=165;
+
+
+    startTimers(()=>{
+
+      regStep=7;
+
+      renderRegister();
+
+    });
+
+
+    regStep=5;
+
+    renderRegister();
+
+  }catch(e){
+
+    alert(e.error);
+
+  }
+
+}
+
+
+async function autoFill(){
+
+  const j=
+    await fetch(
+      '/api/_debug/otp/'+challengeId
+    ).then(r=>r.json());
+
+
+  j.otp
+    .split('')
+    .forEach((c,i)=>{
+
+      regOtp[i]=c;
+
+      document
+        .getElementById('ro'+i)
+        .value=c;
+
+    });
+
+
+  await api(
+    '/api/verify-email-otp',
+    {
+      challengeId,
+      otp:j.otp
+    }
+  );
+
+
+  challengeId=
+    (
+      await api(
+        '/api/send-sms-otp',
+        {
+          email:emailForFlow
+        }
+      )
+    ).challengeId;
+
+
+  regOtp=['','','','','',''];
+
+  expLeft=165;
+
+
+  startTimers(()=>{
+
+    regStep=7;
+
+    renderRegister();
+
+  });
+
+
+  regStep=5;
+
+  renderRegister();
+
+}
+
+
+async function autoFillMobile(){
+
+  const j=
+    await fetch(
+      '/api/_debug/otp/'+challengeId
+    ).then(r=>r.json());
+
+
+  j.otp
+    .split('')
+    .forEach((c,i)=>{
+
+      regOtp[i]=c;
+
+      document
+        .getElementById('mo'+i)
+        .value=c;
+
+    });
+
+
+  await api(
+    '/api/verify-sms-otp',
+    {
+      challengeId,
+      otp:j.otp
+    }
+  );
+
+
+  regStep=8;
+
+  renderRegister();
+
+}
+
+
+/* =========================================================
+   MODE SWITCH
+========================================================= */
+
+function setMode(m){
+
+  mode=m;
+
+  clearInterval(timer);
+
+
+  document
+    .getElementById('loginLayout')
+    .style.display=
+      m==='login'
+      ?'flex'
+      :'none';
+
+
+  document
+    .getElementById('regLayout')
+    .style.display=
+      m==='register'
+      ?'flex'
+      :'none';
+
+
+  document
+    .getElementById('swLogin')
+    .classList
+    .toggle(
+      'active',
+      m==='login'
+    );
+
+
+  document
+    .getElementById('swReg')
+    .classList
+    .toggle(
+      'active',
+      m==='register'
+    );
+
+
+  if(m==='login'){
+
+    loginStep=1;
+
+    otp=['','','','','',''];
+
+    renderLogin();
+
+  }else{
+
+    regStep=1;
+
+    regOtp=['','','','','',''];
+
+    renderRegister();
+
+  }
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+setMode('login');
+
+</script>
+
+</body>
+</html>
