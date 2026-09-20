@@ -1,8 +1,8 @@
 <?php
 require_once 'config/db.php';
 
-$username = "sysadmin";
-$newPassword = "admin123";
+$username = "swapnil";
+$newPassword = "swapnil";
 
 $hashed = password_hash($newPassword, PASSWORD_DEFAULT);
 
